@@ -1,0 +1,12 @@
+.form-card-view {
+    -fx-background-color: rgb(0, 48, 143, 0.9);
+}
+
+.form-title {
+    -fx-alignment: center;
+    -fx-font-size: 30;
+}
+
+.separator-transparent {
+    -fx-background-color: transparent;
+}
