@@ -1,0 +1,22 @@
+VBox {
+
+}
+
+HBox {
+    -fx-background-color: transparent;
+}
+
+Button {
+    -fx-pref-width: 20em;
+    -fx-background-color: transparent;
+    -fx-border-color: #00fdff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-text-fill: white;
+    -fx-text-transform: uppercase;
+}
+
+.select-file-button {
+    -fx-pref-width: 4em;
+}

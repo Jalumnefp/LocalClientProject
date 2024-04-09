@@ -3,20 +3,31 @@ package es.jfp.localclientproject;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.controlsfx.glyphfont.FontAwesome;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class App extends Application {
+
+    private static Stage stage;
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main-view.fxml"));
+        App.stage = stage;
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("search-server-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
-        stage.setTitle("Hello!");
-        stage.setMaximized(true);
+        scene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("styles/search-server-view-styles.css")).toExternalForm());
+        stage.setTitle("LocalClientProject");
+        stage.setMaximized(false);
         stage.setScene(scene);
         stage.show();
+    }
+
+    public static Stage getRootStage() {
+        return stage;
     }
 
     public static void main(String[] args) {

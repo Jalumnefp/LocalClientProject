@@ -2,41 +2,61 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import org.controlsfx.glyphfont.*?>
+<?import es.jfp.localclientproject.elements.DayNightButton?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="@styles/main-view-styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.MainController">
+<?import javafx.scene.control.skin.ColorPickerSkin.PickerColorBox?>
+<?import javafx.scene.shape.QuadCurve?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
+            stylesheets="@styles/main-view-styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="es.jfp.localclientproject.controllers.MainController">
    <center>
-      <SplitPane dividerPositions="0.20755347593582885" prefHeight="160.0" prefWidth="200.0" styleClass="wallpaper" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="splitPane" dividerPositions="0.4" prefHeight="160.0" prefWidth="200.0" styleClass="wallpaper" BorderPane.alignment="CENTER">
         <items>
             <AnchorPane minHeight="0.0" minWidth="0.0">
                 <children>
-                    <Label fx:id="directoryTreeTitleLabel" prefHeight="40" styleClass="bg-white-opaque-7" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <padding>
-                        <Insets left="10.0" right="10.0" />
-                     </padding></Label>
-                    <TreeView fx:id="directoryTreeView" styleClass="bg-transparent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" />
+                    <ToolBar layoutX="7.0" layoutY="40.0" prefHeight="40.0" prefWidth="200.0" styleClass="bg-white-opaque-7" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <items>
+                            <HBox prefHeight="0.0" prefWidth="5.0" />
+                            <Button fx:id="userProfileButton">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="USER" fontSize="24" />
+                                </graphic>
+                            </Button>
+                            <HBox prefHeight="0.0" prefWidth="10.0" />
+                            <Button fx:id="createFolderActionIcon">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="FOLDER" fontSize="24" />
+                                </graphic>
+                            </Button>
+                            <HBox prefHeight="0.0" prefWidth="10.0" />
+                            <Button fx:id="uploadActionIcon">
+                                <graphic>
+                                    <Glyph fontFamily="FontAwesome" icon="UPLOAD" fontSize="24" />
+                                </graphic>
+                            </Button>
+                            <HBox prefHeight="0.0" prefWidth="10.0" />
+                            <DayNightButton />
+                        </items>
+                    </ToolBar>
+                    <TreeView fx:id="directoryTreeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+
+                    </TreeView>
                 </children>
             </AnchorPane>
             <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="bg-transparent">
                <children>
-                  <ListView fx:id="currentDirectoryList" styleClass="bg-transparent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" />
-                  <ToolBar layoutX="7.0" layoutY="40.0" prefHeight="40.0" prefWidth="200.0" styleClass="bg-white-opaque-7" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <items>
-                        <HBox prefHeight="0.0" prefWidth="5.0" />
-                        <ImageView fx:id="createFolderActionIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@images/icons/folder-plus-solid.png" />
-                            </image>
-                        </ImageView>
-                        <HBox prefHeight="0.0" prefWidth="10.0" />
-                        <ImageView fx:id="uploadActionIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                            <image>
-                                <Image url="@images/icons/upload-solid.png" />
-                            </image>
-                        </ImageView>
-                    </items>
-                  </ToolBar>
+                   <Label fx:id="directoryTreeTitleLabel" prefHeight="40" styleClass="bg-white-opaque-7" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                       <padding>
+                           <Insets left="10.0" right="10.0" />
+                       </padding>
+                   </Label>
+                  <ListView fx:id="currentDirectoryList" styleClass="bg-transparent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                      <shape>
+                          <QuadCurve />
+                      </shape>
+                  </ListView>
                </children></AnchorPane>
         </items>
       </SplitPane>
@@ -44,14 +64,16 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="File">
+          <Menu mnemonicParsing="false" text="Actions">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+                <MenuItem fx:id="menuItemUploadFile" mnemonicParsing="false" text="Upload file" />
+                <MenuItem fx:id="menuItemCreateNewFolder" mnemonicParsing="false" text="Create new folder" />
+                <MenuItem fx:id="menuItemClose" mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="View">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" text="Background image" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">

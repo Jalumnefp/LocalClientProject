@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.AddServerDialogController">
+    <children>
+        <Label styleClass="title-lbl" text="Introducir datos del servidor" />
+        <HBox spacing="10">
+            <Label text="Alias: " />
+            <TextField fx:id="serverAliasTextField" />
+        </HBox>
+        <HBox spacing="10">
+            <Label text="Ipv4: " />
+            <TextField fx:id="ipv4TextField" />
+        </HBox>
+        <HBox spacing="10">
+            <Label text="Puerto: " />
+            <TextField fx:id="portTextField" />
+        </HBox>
+        <CheckBox fx:id="saveServerCheckBox" mnemonicParsing="false" text="Guardar Servidor" />
+        <GridPane prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="-Infinity" />
+                <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="-Infinity" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="ALWAYS" />
+            </rowConstraints>
+            <children>
+                <Button fx:id="closeButton" maxWidth="Infinity" mnemonicParsing="false" text="Cancelar" GridPane.columnIndex="0" GridPane.halignment="CENTER">
+                    </Button>
+                <Button fx:id="acceptButton" maxWidth="Infinity" mnemonicParsing="false" text="Añadir" GridPane.columnIndex="1" GridPane.halignment="CENTER"></Button>
+            </children>
+        </GridPane>
+    </children>
+</VBox>
