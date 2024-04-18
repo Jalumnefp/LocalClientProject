@@ -2,10 +2,7 @@ package es.jfp.localclientproject.controllers;
 
 import es.jfp.localclientproject.App;
 import es.jfp.localclientproject.data.FileItem;
-import es.jfp.localclientproject.elements.CreateNewFolderAlert;
-import es.jfp.localclientproject.elements.DirectoryTreeItem;
-import es.jfp.localclientproject.elements.FileListItem;
-import es.jfp.localclientproject.elements.UploadFileDialog;
+import es.jfp.localclientproject.elements.*;
 import es.jfp.localclientproject.models.MainModel;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -17,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,7 +24,6 @@ import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.controlsfx.control.BreadCrumbBar;
 import org.controlsfx.dialog.ExceptionDialog;
-import org.controlsfx.dialog.LoginDialog;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
 
@@ -65,7 +62,7 @@ public final class MainController {
     @FXML
     private Button uploadActionIcon;
     @FXML
-    private ListView<AnchorPane> currentDirectoryList;
+    private ListView<GridPane> currentDirectoryList;
 
     private String rootPath;
 
@@ -92,7 +89,7 @@ public final class MainController {
         });
 
         userProfileButton.setOnMouseClicked(mouseEvent -> {
-            LoginDialog loginDialog = new LoginDialog(null, null);
+            LoginDialog loginDialog = new LoginDialog();
             loginDialog.showAndWait();
         });
 

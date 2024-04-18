@@ -33,6 +33,11 @@ public final class UploadFileController {
     @FXML
     private void initialize() {
 
+        uploadFileButton.setDisable(true);
+        pathTextField.setEditable(false);
+
+        pathTextField.textProperty().addListener((observableValue, s, t1) -> uploadFileButton.setDisable(t1.isEmpty()));
+
         selectFileButton.setOnMouseClicked(mouseEvent -> {
             selectedFile = fileChooser.showOpenDialog(selectFileButton.getScene().getWindow());
             if (selectedFile!=null) {

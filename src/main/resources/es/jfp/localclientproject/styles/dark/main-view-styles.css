@@ -13,6 +13,10 @@ Button, DayNightButton {
 }
 
 Button *, DayNightButton * {
+    -fx-fill: white;
+}
+
+Button *, DayNightButton * {
     -fx-fill: rgb(255, 255, 255);
 }
 

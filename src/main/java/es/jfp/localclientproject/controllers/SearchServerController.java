@@ -15,6 +15,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.controlsfx.dialog.ExceptionDialog;
@@ -52,13 +53,8 @@ public class SearchServerController {
 
         showAddServerDialogButton.setOnAction(actionEvent -> {
             Alert alert = getAddServerDialog();
-            alert.showAndWait();
-            Server tempServer = ServerHistoryModel.getInstance().getTempServer();
-            reloadListElements();
-            if (tempServer!=null) {
-                serversTableView.getItems().add(tempServer);
-            }
-            serversTableView.refresh();
+            //ServerHistoryModel.getInstance().setTempServer(null);
+            handleDialogResult(alert);
         });
 
         showDeleteAlertDialogButton.setOnAction(actionEvent -> deleteItem());
@@ -77,11 +73,28 @@ public class SearchServerController {
             }
         });
 
+        editMenuItem.setOnAction(actionEvent -> {
+            Alert alert = getAddServerDialog();
+            Server selectedServer = serversTableView.getSelectionModel().getSelectedItem();
+            //ServerHistoryModel.getInstance().setTempServer(selectedServer);
+            handleDialogResult(alert);
+        });
+
         connectButton.setOnAction(actionEvent -> {
             connectServer();
         });
 
 
+    }
+
+    private void handleDialogResult(Alert alert) {
+        alert.showAndWait();
+        Server tempServer = ServerHistoryModel.getInstance().getTempServer();
+        reloadListElements();
+        if (tempServer!=null) {
+            serversTableView.getItems().add(tempServer);
+        }
+        serversTableView.refresh();
     }
 
     private void deleteItem() {
@@ -101,7 +114,7 @@ public class SearchServerController {
     private Alert getAddServerDialog() {
         Alert alert = null;
         try {
-            Pane pane = FXMLLoader.load(App.class.getResource("create-server-connection-view.fxml"));
+            Pane pane = FXMLLoader.load(Objects.requireNonNull(App.class.getResource("create-server-connection-view.fxml")));
             alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText(null);
             alert.setGraphic(null);

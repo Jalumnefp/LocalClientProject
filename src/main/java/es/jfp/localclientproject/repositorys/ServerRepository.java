@@ -7,6 +7,7 @@ import javafx.scene.control.ProgressBar;
 
 import java.io.*;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.util.List;
@@ -31,7 +32,8 @@ public class ServerRepository {
     }
 
     public void setServerSocket(InetAddress ipv4, int port) throws IOException {
-        this.socket = new Socket(ipv4, port);
+        this.socket = new Socket();
+        socket.connect(new InetSocketAddress(ipv4, port), 3000);
         System.out.println(socket);
     }
 
@@ -41,7 +43,7 @@ public class ServerRepository {
 
             OutputStream os = new BufferedOutputStream(socket.getOutputStream());
 
-            os.write(0);
+            os.write(11);
             os.flush();
 
             ObjectInputStream is = new ObjectInputStream(socket.getInputStream());
@@ -64,7 +66,7 @@ public class ServerRepository {
 
                 String path = relativePath + file.getName();
 
-                os.write(5);
+                os.write(21);
                 os.flush();
 
                 os.write(path.getBytes().length);
@@ -119,7 +121,7 @@ public class ServerRepository {
 
             DataOutputStream os = new DataOutputStream(socket.getOutputStream());
 
-            os.write(2);
+            os.write(12);
             os.flush();
 
             os.writeUTF(folderPath);

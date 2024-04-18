@@ -12,11 +12,11 @@
             stylesheets="@styles/main-view-styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="es.jfp.localclientproject.controllers.MainController">
    <center>
-      <SplitPane fx:id="splitPane" dividerPositions="0.4" prefHeight="160.0" prefWidth="200.0" styleClass="wallpaper" BorderPane.alignment="CENTER">
+      <SplitPane fx:id="splitPane" dividerPositions="0.4" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
         <items>
             <AnchorPane minHeight="0.0" minWidth="0.0">
                 <children>
-                    <ToolBar layoutX="7.0" layoutY="40.0" prefHeight="40.0" prefWidth="200.0" styleClass="bg-white-opaque-7" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <ToolBar layoutX="7.0" layoutY="40.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                         <items>
                             <HBox prefHeight="0.0" prefWidth="5.0" />
                             <Button fx:id="userProfileButton">
@@ -45,14 +45,14 @@
                     </TreeView>
                 </children>
             </AnchorPane>
-            <AnchorPane minHeight="0.0" minWidth="0.0" styleClass="bg-transparent">
+            <AnchorPane minHeight="0.0" minWidth="0.0">
                <children>
-                   <Label fx:id="directoryTreeTitleLabel" prefHeight="40" styleClass="bg-white-opaque-7" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                   <Label fx:id="directoryTreeTitleLabel" prefHeight="40" wrapText="true" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                        <padding>
                            <Insets left="10.0" right="10.0" />
                        </padding>
                    </Label>
-                  <ListView fx:id="currentDirectoryList" styleClass="bg-transparent" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                  <ListView fx:id="currentDirectoryList" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
                       <shape>
                           <QuadCurve />
                       </shape>
