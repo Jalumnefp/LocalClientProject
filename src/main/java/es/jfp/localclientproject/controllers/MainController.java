@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -62,7 +63,7 @@ public final class MainController {
     @FXML
     private Button uploadActionIcon;
     @FXML
-    private ListView<GridPane> currentDirectoryList;
+    private ListView currentDirectoryList;
 
     private String rootPath;
 
@@ -89,8 +90,21 @@ public final class MainController {
         });
 
         userProfileButton.setOnMouseClicked(mouseEvent -> {
-            LoginDialog loginDialog = new LoginDialog();
-            loginDialog.showAndWait();
+            Alert alert = null;
+            try {
+                String fxmlUrl = App.getCurrentUser() != null ? "user-profile-view.fxml" : "login-view.fxml";
+                Pane pane = FXMLLoader.load(Objects.requireNonNull(App.class.getResource(fxmlUrl)));
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setHeaderText(null);
+                alert.setGraphic(null);
+                alert.getButtonTypes().removeAll(ButtonType.OK);
+                Button cancellButton = (Button) alert.getDialogPane().lookupButton(ButtonType.CANCEL);
+                cancellButton.setVisible(false);
+                alert.getDialogPane().setContent(pane);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            alert.showAndWait();
         });
 
         createFolderActionIcon.setOnMouseClicked(mouseEvent -> showCreateNewFolderDialog());

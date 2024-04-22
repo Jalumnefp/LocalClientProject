@@ -14,6 +14,8 @@ import java.util.Objects;
 public class App extends Application {
 
     private static Stage stage;
+    private static String currentUser;
+
     @Override
     public void start(Stage stage) throws IOException {
         App.stage = stage;
@@ -28,6 +30,12 @@ public class App extends Application {
 
     public static Stage getRootStage() {
         return stage;
+    }
+    public static String getCurrentUser() {
+        return currentUser;
+    }
+    public static void setCurrentUser(String currentUser) {
+        App.currentUser = currentUser;
     }
 
     public static void main(String[] args) {

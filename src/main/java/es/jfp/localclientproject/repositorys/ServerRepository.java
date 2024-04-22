@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import org.controlsfx.dialog.ProgressDialog;
+import org.controlsfx.glyphfont.FontAwesome;
 
 public class ServerRepository {
 
@@ -53,6 +54,41 @@ public class ServerRepository {
             e.printStackTrace();
         }
         return directoryMap;
+    }
+
+
+    public boolean loginUser(String username, String hashPassword) {
+        System.out.println("login username " + username);
+        try {
+            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+            DataInputStream is = new DataInputStream(socket.getInputStream());
+
+            os.write(02);
+            os.writeUTF(username);
+            os.writeUTF(hashPassword);
+
+            return is.readBoolean();
+
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public boolean registerUser(String username, String hashPassword) {
+        System.out.println("register username " + username);
+        try {
+            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+            DataInputStream is = new DataInputStream(socket.getInputStream());
+
+            os.write(01);
+            os.writeUTF(username);
+            os.writeUTF(hashPassword);
+
+            return is.readBoolean();
+
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     public void uploadFile(File file, String relativePath) {
