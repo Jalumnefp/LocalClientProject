@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox spacing="10" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.ServerHistoryDialogController">
+<VBox spacing="10" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.ServerConnectionDialogController">
     <children>
         <Label styleClass="title-lbl" text="Introducir datos del servidor" />
         <TextField fx:id="serverAliasTextField" promptText="Alias del servidor" />

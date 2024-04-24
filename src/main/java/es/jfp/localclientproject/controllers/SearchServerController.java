@@ -2,25 +2,20 @@ package es.jfp.localclientproject.controllers;
 
 import es.jfp.localclientproject.App;
 import es.jfp.localclientproject.data.Server;
-import es.jfp.localclientproject.models.ServerHistoryModel;
+import es.jfp.localclientproject.models.ServerConnectionModel;
 import es.jfp.localclientproject.repositorys.ServerRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.controlsfx.dialog.ExceptionDialog;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -45,7 +40,7 @@ public class SearchServerController {
 
     @FXML
     private void initialize() {
-        serverList = ServerHistoryModel.getInstance().requestGetServers();
+        serverList = ServerConnectionModel.getInstance().requestGetServers();
         ObservableList<Server> data = FXCollections.observableArrayList(serverList);
         serversTableView.setItems(data);
 
@@ -89,7 +84,7 @@ public class SearchServerController {
 
     private void handleDialogResult(Alert alert) {
         alert.showAndWait();
-        Server tempServer = ServerHistoryModel.getInstance().getTempServer();
+        Server tempServer = ServerConnectionModel.getInstance().getTempServer();
         reloadListElements();
         if (tempServer!=null) {
             serversTableView.getItems().add(tempServer);
@@ -105,7 +100,7 @@ public class SearchServerController {
             alert.setContentText(String.format("Estás seguro/a de que quieres borrar el servidor: %s?", selectedServer));
             if (alert.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
                 serverList.remove(selectedServer);
-                ServerHistoryModel.getInstance().requestSaveServers(serverList);
+                ServerConnectionModel.getInstance().requestSaveServers(serverList);
                 reloadListElements();
             }
         }
@@ -131,7 +126,7 @@ public class SearchServerController {
     }
 
     private void reloadListElements() {
-        serverList = ServerHistoryModel.getInstance().requestGetServers();
+        serverList = ServerConnectionModel.getInstance().requestGetServers();
         serversTableView.getItems().clear();
         serversTableView.getItems().addAll(serverList);
     }

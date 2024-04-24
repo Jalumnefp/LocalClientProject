@@ -1,23 +1,19 @@
 package es.jfp.localclientproject.controllers;
 
 import es.jfp.localclientproject.data.Server;
-import es.jfp.localclientproject.models.ServerHistoryModel;
+import es.jfp.localclientproject.models.ServerConnectionModel;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
 import java.util.List;
 
-public class ServerHistoryDialogController {
+public class ServerConnectionDialogController {
 
     @FXML
     private CheckBox saveServerCheckBox;
@@ -31,19 +27,11 @@ public class ServerHistoryDialogController {
     private Button closeButton;
     @FXML
     private Button acceptButton;
-    private final ServerHistoryModel model = ServerHistoryModel.getInstance();
+    private final ServerConnectionModel model = ServerConnectionModel.getInstance();
     private final ValidationSupport validator = new ValidationSupport();
 
     @FXML
     private void initialize() {
-
-        /*Server oldServer = ServerHistoryModel.getInstance().getTempServer();
-        if (oldServer!=null) {
-            serverAliasTextField.setText(oldServer.getAlias());
-            ipv4TextField.setText(oldServer.getIpv4().getHostAddress());
-            portTextField.setText(String.valueOf(oldServer.getPort()));
-            saveServerCheckBox.setVisible(false);
-        }*/
 
         for (TextField textField: new TextField[] {serverAliasTextField, ipv4TextField, portTextField}) {
             validator.registerValidator(textField, false, ((control, o) -> {
@@ -85,18 +73,12 @@ public class ServerHistoryDialogController {
         acceptButton.setOnMouseClicked(mouseEvent -> {
             if (!validator.isInvalid()) {
                 String alias = serverAliasTextField.getText();
-                InetAddress ipv4 = null;
-                try {ipv4 = InetAddress.getByName(ipv4TextField.getText());} catch (UnknownHostException e) {e.printStackTrace();}
-                int port = Integer.parseInt(portTextField.getText());
+                String ipv4 = ipv4TextField.getText();
+                String port = portTextField.getText();
                 Server server = new Server(alias, ipv4, port);
                 if (saveServerCheckBox.isSelected()) {
                     List<Server> serverList = model.requestGetServers();
-                    /*if (oldServer != null) {
-                        int oldServerPosition = serverList.indexOf(oldServer);
-                        serverList.set(oldServerPosition, server);
-                    } else {*/
-                        serverList.add(server);
-                    //}
+                    serverList.add(server);
                     model.requestSaveServers(serverList);
                 } else {
                     model.setTempServer(server);

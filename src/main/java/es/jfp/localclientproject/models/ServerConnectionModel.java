@@ -1,24 +1,24 @@
 package es.jfp.localclientproject.models;
 
 import es.jfp.localclientproject.data.Server;
-import es.jfp.localclientproject.repositorys.ServerHistoryRepository;
+import es.jfp.localclientproject.repositorys.ServerConnectionsRepository;
 
 import java.util.List;
 
-public final class ServerHistoryModel {
+public final class ServerConnectionModel {
 
-    private static ServerHistoryModel instance;
-    private final ServerHistoryRepository repo;
+    private static ServerConnectionModel instance;
+    private final ServerConnectionsRepository repo;
     private Server tempServer;
 
-    private ServerHistoryModel() {
-        this.repo = ServerHistoryRepository.getInstance();
+    private ServerConnectionModel() {
+        this.repo = ServerConnectionsRepository.getInstance();
     }
 
-    public static ServerHistoryModel getInstance() {
-        synchronized (ServerHistoryModel.class) {
+    public static ServerConnectionModel getInstance() {
+        synchronized (ServerConnectionModel.class) {
             if (instance == null) {
-                instance = new ServerHistoryModel();
+                instance = new ServerConnectionModel();
             }
             return instance;
         }

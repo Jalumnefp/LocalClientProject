@@ -1,11 +1,9 @@
 package es.jfp.localclientproject.data;
 
-import java.io.Serializable;
-import java.net.Inet4Address;
 import java.net.InetAddress;
-import java.net.Socket;
+import java.net.UnknownHostException;
 
-public class Server implements Serializable {
+public class Server {
 
     private String alias;
     private InetAddress ipv4;
@@ -17,9 +15,23 @@ public class Server implements Serializable {
         this.port = port;
     }
 
+    public Server(String alias, String ipv4, String port) {
+        this.alias = alias;
+        try {
+            this.ipv4 = InetAddress.getByName(ipv4);
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+        this.port = Integer.parseInt(port);
+    }
+
     @Override
     public String toString() {
         return alias;
+    }
+
+    public String getCsvFormat(char delimiter) {
+        return alias + delimiter + ipv4.getHostAddress() + delimiter + port;
     }
 
     public String getAlias() {
