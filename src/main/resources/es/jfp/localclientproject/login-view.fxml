@@ -8,17 +8,17 @@
 
 <VBox fx:id="rootPane" spacing="10.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.LoginController">
    <children>
-      <CustomTextField fx:id="usernameCustomTextField" promptText="Nombre de usuario">
+      <CustomTextField fx:id="usernameCustomTextField" promptText="%username_field_placeholder">
          <left>
             <Glyph fontFamily="FontAwesome" icon="USER" />
          </left>
       </CustomTextField>
-      <CustomPasswordField fx:id="passwordCustomTextField" promptText="Contraseña">
+      <CustomPasswordField fx:id="passwordCustomTextField" promptText="%password_field_placeholder">
          <left>
             <Glyph fontFamily="FontAwesome" icon="KEY" />
          </left>
       </CustomPasswordField>
-      <Label fx:id="registerUserLabel" text="¿No tienes cuenta? Registrate aquí!" />
+      <Label fx:id="registerUserLabel" text="%register_label_text" />
       <Button fx:id="loginButton" maxWidth="Infinity" mnemonicParsing="false" text="Login" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
       <ProgressBar fx:id="loginProgressBar" prefWidth="200.0" visible="false" />
    </children>

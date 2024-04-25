@@ -13,10 +13,10 @@
                 <Glyph fontFamily="FontAwesome" icon="ARROW_LEFT" />
             </graphic>
         </Button>
-        <CustomTextField fx:id="usernameCustomTextField" promptText="Nombre de usuario" />
-        <CustomPasswordField fx:id="passwordCustomTextField" promptText="Contraseña" />
-        <CustomPasswordField fx:id="repeatPasswordCustomTextField" promptText="Repetir contraseña" />
-        <Button fx:id="registerButton" maxWidth="Infinity" mnemonicParsing="false" text="Registrar" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+        <CustomTextField fx:id="usernameCustomTextField" promptText="%username_field_placeholder" />
+        <CustomPasswordField fx:id="passwordCustomTextField" promptText="%password_field_placeholder" />
+        <CustomPasswordField fx:id="repeatPasswordCustomTextField" promptText="%repeat_password_field_placeholder" />
+        <Button fx:id="registerButton" maxWidth="Infinity" mnemonicParsing="false" text="%register_text" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
         <ProgressBar fx:id="registerProgressBar" prefWidth="200.0" visible="false" />
     </children>
     <padding>

@@ -6,11 +6,11 @@
 
 <VBox spacing="10" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.ServerConnectionDialogController">
     <children>
-        <Label styleClass="title-lbl" text="Introducir datos del servidor" />
-        <TextField fx:id="serverAliasTextField" promptText="Alias del servidor" />
-        <TextField fx:id="ipv4TextField" promptText="Ipv4 del servidor" />
-        <TextField fx:id="portTextField" promptText="Puerto del servidor" />
-        <CheckBox fx:id="saveServerCheckBox" mnemonicParsing="false" text="Guardar Servidor" />
+        <Label styleClass="title-lbl" text="%title_create_server_connection_form" />
+        <TextField fx:id="serverAliasTextField" promptText="%alias_field_placeholder" />
+        <TextField fx:id="ipv4TextField" promptText="%ipv4_field_placeholder" />
+        <TextField fx:id="portTextField" promptText="%port_field_placeholder" />
+        <CheckBox fx:id="saveServerCheckBox" mnemonicParsing="false" text="%save_field_text" />
         <GridPane prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" prefWidth="-Infinity" />
@@ -20,9 +20,9 @@
                 <RowConstraints minHeight="10.0" prefHeight="20.0" vgrow="ALWAYS" />
             </rowConstraints>
             <children>
-                <Button fx:id="closeButton" maxWidth="Infinity" mnemonicParsing="false" text="Cancelar" GridPane.columnIndex="0" GridPane.halignment="CENTER">
+                <Button fx:id="closeButton" maxWidth="Infinity" mnemonicParsing="false" text="%cancel_text" GridPane.columnIndex="0" GridPane.halignment="CENTER">
                     </Button>
-                <Button fx:id="acceptButton" maxWidth="Infinity" mnemonicParsing="false" text="Añadir" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                <Button fx:id="acceptButton" maxWidth="Infinity" mnemonicParsing="false" text="%add_text" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
             </children>
         </GridPane>
     </children>

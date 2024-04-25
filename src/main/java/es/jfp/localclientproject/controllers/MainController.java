@@ -31,10 +31,7 @@ import org.controlsfx.glyphfont.Glyph;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -93,14 +90,15 @@ public final class MainController {
             Alert alert = null;
             try {
                 String fxmlUrl = App.getCurrentUser() != null ? "user-profile-view.fxml" : "login-view.fxml";
-                Pane pane = FXMLLoader.load(Objects.requireNonNull(App.class.getResource(fxmlUrl)));
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxmlUrl));
+                fxmlLoader.setResources(ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings_es"));
                 alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.setHeaderText(null);
                 alert.setGraphic(null);
                 alert.getButtonTypes().removeAll(ButtonType.OK);
                 Button cancellButton = (Button) alert.getDialogPane().lookupButton(ButtonType.CANCEL);
                 cancellButton.setVisible(false);
-                alert.getDialogPane().setContent(pane);
+                alert.getDialogPane().setContent(fxmlLoader.load());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -133,9 +131,10 @@ public final class MainController {
 
     private void showUploadFileDialog() {
         try {
-            Pane uploadDialogView = FXMLLoader.load(App.class.getResource("upload-file-view.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("upload-file-view.fxml"));
+            fxmlLoader.setResources(ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings_es"));
             Stage stage = new Stage();
-            Scene scene = new Scene(uploadDialogView);
+            Scene scene = new Scene(fxmlLoader.load());
             stage.setScene(scene);
             stage.setResizable(false);
             stage.setTitle("Upload file");

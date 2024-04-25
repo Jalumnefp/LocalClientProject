@@ -13,6 +13,7 @@ import org.controlsfx.control.textfield.CustomPasswordField;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 public class RegisterController {
 
@@ -49,6 +50,7 @@ public class RegisterController {
         goBackButton.setOnAction(actionEvent -> {
             Stage stage = (Stage) goBackButton.getParent().getScene().getWindow();
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("login-view.fxml"));
+            fxmlLoader.setResources(ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings_es"));
             try {
                 stage.setScene(new Scene(fxmlLoader.load()));
             } catch (IOException e) {

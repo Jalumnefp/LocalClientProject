@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class SearchServerController {
 
@@ -109,14 +110,15 @@ public class SearchServerController {
     private Alert getAddServerDialog() {
         Alert alert = null;
         try {
-            Pane pane = FXMLLoader.load(Objects.requireNonNull(App.class.getResource("create-server-connection-view.fxml")));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("create-server-connection-view.fxml"));
+            fxmlLoader.setResources(ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings_es"));
             alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText(null);
             alert.setGraphic(null);
             alert.getButtonTypes().removeAll(ButtonType.OK);
             Button cancellButton = (Button) alert.getDialogPane().lookupButton(ButtonType.CANCEL);
             cancellButton.setVisible(false);
-            alert.getDialogPane().setContent(pane);
+            alert.getDialogPane().setContent(fxmlLoader.load());
         } catch (IOException e) {
             e.printStackTrace();
             ExceptionDialog exceptionDialog = new ExceptionDialog(e);
@@ -137,8 +139,9 @@ public class SearchServerController {
         int port = selectedServer.getPort();
         try {
             ServerRepository.getInstance().setServerSocket(ipv4, port);
-            Pane sceneContent = FXMLLoader.load(App.class.getResource("main-view.fxml"));
-            Scene newScene = new Scene(sceneContent);
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main-view.fxml"));
+            fxmlLoader.setResources(ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings_es"));
+            Scene newScene = new Scene(fxmlLoader.load());
             newScene.getStylesheets().clear();
             newScene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("styles/main-view-styles.css")).toExternalForm());
             Stage rootStage = App.getRootStage();

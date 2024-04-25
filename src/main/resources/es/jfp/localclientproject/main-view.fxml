@@ -64,19 +64,19 @@
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
-          <Menu mnemonicParsing="false" text="Actions">
+          <Menu mnemonicParsing="false" text="%actions_menu_text">
             <items>
                 <MenuItem fx:id="menuItemUploadFile" mnemonicParsing="false" text="Upload file" />
                 <MenuItem fx:id="menuItemCreateNewFolder" mnemonicParsing="false" text="Create new folder" />
                 <MenuItem fx:id="menuItemClose" mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="View">
+          <Menu mnemonicParsing="false" text="%view_menu_text">
             <items>
               <MenuItem mnemonicParsing="false" text="Background image" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Help">
+          <Menu mnemonicParsing="false" text="%help_menu_text">
             <items>
               <MenuItem mnemonicParsing="false" text="About" />
             </items>

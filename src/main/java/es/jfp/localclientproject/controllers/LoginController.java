@@ -14,6 +14,7 @@ import org.controlsfx.control.textfield.CustomPasswordField;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import java.io.IOException;
+import java.util.ResourceBundle;
 
 public class LoginController {
 
@@ -48,6 +49,7 @@ public class LoginController {
         registerUserLabel.setOnMouseClicked(mouseEvent -> {
             Stage stage = (Stage) loginButton.getParent().getScene().getWindow();
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("register-view.fxml"));
+            fxmlLoader.setResources(ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings_es"));
             try {
                 stage.setScene(new Scene(fxmlLoader.load()));
             } catch (IOException e) {

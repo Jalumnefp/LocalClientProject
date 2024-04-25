@@ -11,17 +11,17 @@
     <children>
         <TableView fx:id="serversTableView" layoutY="40.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
             <columns>
-                <TableColumn text="Alias">
+                <TableColumn text="%alias_col">
                     <cellValueFactory>
                         <PropertyValueFactory property="alias" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="IPv4">
+                <TableColumn text="%ipv4_col">
                     <cellValueFactory>
                         <PropertyValueFactory property="ipv4" />
                     </cellValueFactory>
                 </TableColumn>
-                <TableColumn text="Puerto" >
+                <TableColumn text="%port_col" >
                     <cellValueFactory>
                         <PropertyValueFactory property="port" />
                     </cellValueFactory>
@@ -52,7 +52,7 @@
             </items>
         </ToolBar>
         <HBox prefHeight="40" style="-fx-alignment: center;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-            <Button fx:id="connectButton" maxWidth="Infinity" mnemonicParsing="false" style="-fx-pref-width: 20em;" text="Conectar" />
+            <Button fx:id="connectButton" maxWidth="Infinity" mnemonicParsing="false" style="-fx-pref-width: 20em;" text="%server_connection" />
         </HBox>
     </children>
 </AnchorPane>
