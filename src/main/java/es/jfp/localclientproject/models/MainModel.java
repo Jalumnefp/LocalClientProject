@@ -4,6 +4,7 @@ import es.jfp.localclientproject.data.FileItem;
 import es.jfp.localclientproject.repositorys.ServerRepository;
 import javafx.scene.control.TreeItem;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.*;
 
@@ -30,12 +31,20 @@ public final class MainModel {
         return createTreeItem(tree);
     }
 
+    public void deleteFile(String path) {
+        serverRepo.deleteFile(path);
+    }
+
     public void createNewFolder(String path) {
         serverRepo.createNewFolder(path);
     }
 
     public void uploadFile(File file, String relativePath) {
         serverRepo.uploadFile(file, relativePath);
+    }
+
+    public void downloadFile(String destination, String filePath) {
+        serverRepo.downloadFile(destination, filePath);
     }
 
     public void sendFileToModel(File file) {

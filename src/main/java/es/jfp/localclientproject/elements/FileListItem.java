@@ -1,53 +1,75 @@
 package es.jfp.localclientproject.elements;
 
 import es.jfp.localclientproject.App;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 
 import java.io.InputStream;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-public class FileListItem extends AnchorPane {
+public class FileListItem extends HBox {
 
     private final boolean isDirectory;
+    private final String path;
 
-    public FileListItem(String fileName, boolean isDirectory) {
+    public FileListItem(String fileName, String path, boolean isDirectory, Consumer<String> download, BiConsumer<String, Boolean> delete) {
         Label fileNameLabel = setUpFileName(fileName);
+        this.path = path;
         this.isDirectory = isDirectory;
         ImageView fileImageView = setUpFileImage();
+        MenuButton menuButton = setUpButton(download, delete);
 
-        getChildren().addAll(fileImageView, fileNameLabel);
+        getChildren().addAll(fileImageView, createSpacer(), fileNameLabel, createSpacer(), menuButton);
+
+        setAlignment(Pos.CENTER);
+        setPadding(new Insets(0, 20, 0, 20));
     }
 
     private Label setUpFileName(String name) {
         Label label = new Label();
-        label.setLayoutX(137.0);
-        label.setLayoutY(22.0);
-        label.setPrefHeight(42.0);
-        label.setPrefWidth(28.0);
+        label.setPrefHeight(28.0);
+        label.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        label.setMaxWidth(500.0);
         label.setText(name);
-        AnchorPane.setBottomAnchor(label, 12.0);
-        AnchorPane.setLeftAnchor(label, 200.0);
-        AnchorPane.setRightAnchor(label, 200.0);
-        AnchorPane.setTopAnchor(label, 12.0);
         return label;
     }
 
     private ImageView setUpFileImage() {
         ImageView imageView = new ImageView();
-        imageView.setFitHeight(78.0);
+        imageView.setFitHeight(52.0);
         imageView.setFitWidth(78.0);
         imageView.setPickOnBounds(true);
         imageView.setPreserveRatio(true);
-        AnchorPane.setBottomAnchor(imageView, 5.0);
-        AnchorPane.setLeftAnchor(imageView, 15.0);
-        AnchorPane.setRightAnchor(imageView, 520.0);
-        AnchorPane.setTopAnchor(imageView, 5.0);
         String url = "images/icons/" + (isDirectory ? "folder-regular.png" : "file-regular.png");
         InputStream iconStream = App.class.getResourceAsStream(url);
         imageView.setImage(new Image(iconStream));
         return imageView;
     }
 
+    private MenuButton setUpButton(Consumer<String> download, BiConsumer<String, Boolean> delete) {
+        MenuButton button = new MenuButton();
+        button.setStyle("-fx-font-size: 12px; -fx-background-color: transparent;");
+        MenuItem menuItemDownload = new MenuItem("Descargar");
+        menuItemDownload.setOnAction(actionEvent -> download.accept(this.path));
+        MenuItem menuItemEliminar = new MenuItem("Eliminar");
+        menuItemEliminar.setOnAction(actionEvent -> delete.accept(this.path, isDirectory));
+        button.getItems().addAll(menuItemDownload, menuItemEliminar);
+
+        return button;
+    }
+
+    private Region createSpacer() {
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        return spacer;
+    }
 }

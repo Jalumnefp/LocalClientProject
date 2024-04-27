@@ -1,19 +1,15 @@
 package es.jfp.localclientproject.repositorys;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ProgressBar;
-
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import org.controlsfx.dialog.ProgressDialog;
-import org.controlsfx.glyphfont.FontAwesome;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ServerRepository {
 
@@ -111,7 +107,6 @@ public class ServerRepository {
                 os.write(path.getBytes());
                 os.flush();
 
-                long fileSize = file.length();
                 long bytesSent = 0;
                 byte[] buffer = new byte[2048];
                 int bytesRead;
@@ -120,36 +115,68 @@ public class ServerRepository {
                     os.flush();
                     bytesSent += bytesRead;
 
-                    int progress = (int) ((bytesSent * 100) / fileSize);
+                    int progress = (int) ((bytesSent * 100) / file.length());
                     System.out.println(progress);
-                    //updateProgress(progress, 100);
-
                 }
                 os.flush();
-
-                /*Platform.runLater(() -> {
-
-                    Task<Object> task = new Task<>() {
-                        @Override
-                        protected Object call() throws Exception {
-
-                            return null;
-                        }
-                    };
-
-                    ProgressDialog progressDialog = new ProgressDialog(task);
-                    new Thread(task).start();
-                    progressDialog.show();
-
-                });*/
+                System.out.println("Final");
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-
         thread.start();
+    }
 
+    public void downloadFile(String destinationPath, String path) {
+
+        new Thread(() -> {
+            try (OutputStream fos = Files.newOutputStream(Path.of(destinationPath))) {
+
+                OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+                InputStream is = new BufferedInputStream(socket.getInputStream());
+
+                os.write(22);
+                os.flush();
+
+                os.write(path.getBytes().length);
+                os.flush();
+
+                os.write(path.getBytes());
+                os.flush();
+
+                long bytesSent = 0;
+                byte[] buffer = new byte[2048];
+                int bytes;
+                while ((bytes=is.read(buffer))!=-1) {
+                    if (bytes == 1 && buffer[0] == -1) {
+                        break;
+                    }
+                    fos.write(buffer, 0, bytes);
+                    fos.flush();
+                }
+                System.out.println("Final");
+                fos.flush();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    public void deleteFile(String pathToDelete) {
+        try {
+
+            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+
+            os.write(24);
+            os.flush();
+            os.writeUTF(pathToDelete);
+            os.flush();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void createNewFolder(String folderPath) {
