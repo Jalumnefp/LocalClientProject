@@ -4,9 +4,10 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.glyphfont.Glyph?>
-<?import es.jfp.localclientproject.elements.DayNightButton?>
+<?import es.jfp.localclientproject.elements.ThemeButton?>
 
 
+<?import es.jfp.localclientproject.elements.LangComboBox?>
 <AnchorPane prefHeight="300.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.SearchServerController">
     <children>
         <TableView fx:id="serversTableView" layoutY="40.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
@@ -48,7 +49,8 @@
                         <Glyph fontFamily="FontAwesome" icon="MINUS_SQUARE" />
                     </graphic>
                 </Button>
-                <DayNightButton maxWidth="Infinity" maxHeight="Infinity" />
+                <ThemeButton maxWidth="Infinity" maxHeight="Infinity" />
+                <LangComboBox />
             </items>
         </ToolBar>
         <HBox prefHeight="40" style="-fx-alignment: center;" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">

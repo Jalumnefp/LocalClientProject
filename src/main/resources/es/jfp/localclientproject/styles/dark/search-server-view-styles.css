@@ -41,13 +41,14 @@ ToolBar, ToolBar *:not(Button) {
     -fx-background-color: transparent;
 }
 
-ToolBar Button, ToolBar DayNightButton {
+ToolBar Button, ToolBar ThemeButton, ToolBar LangComboBox, LangComboBox * {
     -fx-border-width: 1px;
     -fx-border-color: white;
     -fx-border-radius: 6px;
     -fx-background-color: transparent;
 }
 
-Button *, DayNightButton * {
+Button *, ThemeButton *, LangComboBox * {
     -fx-fill: white;
+    -fx-background-color: #232323;
 }

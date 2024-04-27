@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.glyphfont.*?>
-<?import es.jfp.localclientproject.elements.DayNightButton?>
+<?import es.jfp.localclientproject.elements.ThemeButton?>
 
 <?import javafx.scene.control.skin.ColorPickerSkin.PickerColorBox?>
 <?import javafx.scene.shape.QuadCurve?>
@@ -37,7 +37,9 @@
                                 </graphic>
                             </Button>
                             <HBox prefHeight="0.0" prefWidth="10.0" />
-                            <DayNightButton />
+                            <AnchorPane>
+                                <ThemeButton AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" />
+                            </AnchorPane>
                         </items>
                     </ToolBar>
                     <TreeView fx:id="directoryTreeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">

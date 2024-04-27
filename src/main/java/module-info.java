@@ -4,6 +4,7 @@ module es.jfp.localclientproject {
     requires java.base;
     requires org.controlsfx.controls;
     requires javafx.graphics;
+    requires java.prefs;
 
     opens es.jfp.localclientproject to javafx.fxml;
     exports es.jfp.localclientproject;
