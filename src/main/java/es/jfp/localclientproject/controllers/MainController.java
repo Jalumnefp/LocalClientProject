@@ -5,32 +5,32 @@ import es.jfp.localclientproject.data.FileItem;
 import es.jfp.localclientproject.elements.CreateNewFolderAlert;
 import es.jfp.localclientproject.elements.FileListItem;
 import es.jfp.localclientproject.models.MainModel;
+import es.jfp.localclientproject.repositorys.ServerRepository;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.BreadCrumbBar;
 import org.controlsfx.dialog.ExceptionDialog;
-import org.controlsfx.glyphfont.FontAwesome;
-import org.controlsfx.glyphfont.Glyph;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 
 public final class MainController {
 
     private final MainModel model = MainModel.getInstance();
+    @FXML
+    private  MenuItem menuItemReturnServerChooser;
     @FXML
     private SplitPane splitPane;
     @FXML
@@ -60,11 +60,10 @@ public final class MainController {
 
     @FXML
     public void initialize() {
-        directoryTreeView.setRoot(model.getTreeDirectory());
-        rootPath = directoryTreeView.getRoot().getValue().getName();
-        directoryTreeTitleLabel.setText(rootPath);
-
-        updateCurrentDirectoryList(directoryTreeView.getRoot().getChildren());
+        // guardar directorios en el modelo
+        directoryTreeView.setRoot(MainModel.getInstance().getTreeDirectory(true));
+        setUpDirectoryElements();
+        startDirectoryListenerThread();
 
         directoryTreeView.setOnMouseClicked(mouseEvent -> {
             TreeItem<FileItem> selectedItem = directoryTreeView.getSelectionModel().getSelectedItem();
@@ -103,11 +102,42 @@ public final class MainController {
 
         menuItemCreateNewFolder.setOnAction(actionEvent -> showCreateNewFolderDialog());
 
+        menuItemReturnServerChooser.setOnAction(actionEvent -> {
+            try {
+                ServerRepository.getInstance().closeConnection();
+                App.loadSceneInRootStage("search-server-view", stage -> {
+                    stage.setWidth(400);
+                    stage.setHeight(300);
+                    stage.centerOnScreen();
+                });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
         menuItemClose.setOnAction(actionEvent -> {
             Stage stage = (Stage) uploadActionIcon.getScene().getWindow();
             stage.close();
         });
 
+    }
+
+    private void startDirectoryListenerThread() {
+        new Thread(() -> {
+            while (ServerRepository.getInstance().socketIsRunning()) {
+                TreeItem<FileItem> directoryTreeItem = MainModel.getInstance().getTreeDirectory(false);
+                Platform.runLater(() -> {
+                    directoryTreeView.setRoot(directoryTreeItem);
+                    setUpDirectoryElements();
+                });
+            }
+        }).start();
+    }
+
+    private void setUpDirectoryElements() {
+        updateCurrentDirectoryList(directoryTreeView.getRoot().getChildren());
+        rootPath = directoryTreeView.getRoot().getValue().getName();
+        directoryTreeTitleLabel.setText(rootPath);
     }
 
     private void showCreateNewFolderDialog() {
@@ -146,7 +176,8 @@ public final class MainController {
         currentDirectoryList.getItems().clear();
         if (!children.isEmpty()) {
             for (TreeItem<FileItem> child: children) {
-                FileListItem item = new FileListItem(child.getValue().getName(), getPath(child), child.getValue().isDirectory(), this::downloadFile, this::deleteFile);
+                FileListItem item = new FileListItem(
+                        child.getValue().getName(), getPath(child), child.getValue().isDirectory(), this::downloadFile, this::deleteFile);
                 currentDirectoryList.getItems().add(item);
             }
         } else {

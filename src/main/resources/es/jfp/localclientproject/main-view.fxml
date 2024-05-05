@@ -5,6 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import org.controlsfx.glyphfont.*?>
 <?import es.jfp.localclientproject.elements.ThemeButton?>
+<?import es.jfp.localclientproject.elements.LangComboBox?>
 
 <?import javafx.scene.control.skin.ColorPickerSkin.PickerColorBox?>
 <?import javafx.scene.shape.QuadCurve?>
@@ -40,6 +41,7 @@
                             <AnchorPane>
                                 <ThemeButton AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" />
                             </AnchorPane>
+                            <LangComboBox/>
                         </items>
                     </ToolBar>
                     <TreeView fx:id="directoryTreeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
@@ -68,19 +70,20 @@
         <menus>
           <Menu mnemonicParsing="false" text="%actions_menu_text">
             <items>
-                <MenuItem fx:id="menuItemUploadFile" mnemonicParsing="false" text="Upload file" />
-                <MenuItem fx:id="menuItemCreateNewFolder" mnemonicParsing="false" text="Create new folder" />
-                <MenuItem fx:id="menuItemClose" mnemonicParsing="false" text="Close" />
+                <MenuItem fx:id="menuItemUploadFile" mnemonicParsing="false" text="%upload_file_action_menu_text" />
+                <MenuItem fx:id="menuItemCreateNewFolder" mnemonicParsing="false" text="%craete_new_folder_action_menu_text" />
+                <MenuItem fx:id="menuItemReturnServerChooser" mnemonicParsing="false" text="%return_server_chooser_action_menu_text"/>
+                <MenuItem fx:id="menuItemClose" mnemonicParsing="false" text="%close_action_menu_text" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%view_menu_text">
             <items>
-              <MenuItem mnemonicParsing="false" text="Background image" />
+              <MenuItem mnemonicParsing="false" text="%bg_image_menu_text" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="%help_menu_text">
             <items>
-              <MenuItem mnemonicParsing="false" text="About" />
+              <MenuItem mnemonicParsing="false" text="%about_menu_text" />
             </items>
           </Menu>
         </menus>

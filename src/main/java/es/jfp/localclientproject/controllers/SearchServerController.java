@@ -139,19 +139,14 @@ public class SearchServerController {
         int port = selectedServer.getPort();
         try {
             ServerRepository.getInstance().setServerSocket(ipv4, port);
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("main-view.fxml"));
-            fxmlLoader.setResources(ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings_es"));
-            Scene newScene = new Scene(fxmlLoader.load());
-            newScene.getStylesheets().clear();
-            newScene.getStylesheets().add(Objects.requireNonNull(App.class.getResource("styles/main-view-styles.css")).toExternalForm());
-            Stage rootStage = App.getRootStage();
-            Rectangle2D screen = Screen.getPrimary().getVisualBounds();
-            rootStage.setX(screen.getMinX());
-            rootStage.setY(screen.getMinY());
-            rootStage.setWidth(screen.getWidth());
-            rootStage.setHeight(screen.getHeight());
-            rootStage.setMaximized(false);
-            rootStage.setScene(newScene);
+            App.loadSceneInRootStage("main-view", stage -> {
+                Rectangle2D screen = Screen.getPrimary().getVisualBounds();
+                stage.setX(screen.getMinX());
+                stage.setY(screen.getMinY());
+                stage.setWidth(screen.getWidth());
+                stage.setHeight(screen.getHeight());
+                stage.setMaximized(false);
+            });
         } catch (IOException e) {
             e.printStackTrace();
             ExceptionDialog dialog = new ExceptionDialog(e);

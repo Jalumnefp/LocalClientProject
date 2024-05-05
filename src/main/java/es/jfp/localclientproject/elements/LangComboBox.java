@@ -1,24 +1,29 @@
 package es.jfp.localclientproject.elements;
 
 import javafx.collections.FXCollections;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import es.jfp.localclientproject.App;
-import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.nio.file.Path;
 import java.util.Map;
 
 public class LangComboBox extends ComboBox<String> {
 
+    private String context;
     private final Map<String, String> languages = Map.of(
             "CAS", "es_ES",
             "ENG", "en_US",
             "VAL", "ca_ES_VALENCIA"
     );
 
+
     public LangComboBox() {
+        super();
+
+        this.context = context;
 
         this.setItems(FXCollections.observableArrayList("CAS", "ENG", "VAL"));
 
@@ -35,12 +40,16 @@ public class LangComboBox extends ComboBox<String> {
             String lang = languages.get(selection);
             App.preferences.put("LANGUAGE", lang);
             try {
-                App.loadSceneInRootStage("search-server-view");
+                String currentScene = App.getCurrentScene();
+                System.out.println(currentScene);
+                App.loadSceneInRootStage(currentScene, null);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
 
     }
+
+
 
 }

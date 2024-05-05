@@ -14,9 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ServerRepository {
 
     private static ServerRepository instance;
-
     private Socket socket;
-
     private ServerRepository() {}
 
     public static ServerRepository getInstance() {
@@ -34,14 +32,15 @@ public class ServerRepository {
         System.out.println(socket);
     }
 
-    public Map<String, List<String[]>> getDirectoryMap() {
+    public Map<String, List<String[]>> getDirectoryMap(boolean init) {
         Map<String, List<String[]>> directoryMap = null;
         try {
 
-            OutputStream os = new BufferedOutputStream(socket.getOutputStream());
-
-            os.write(11);
-            os.flush();
+            if (init) {
+                OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+                os.write(11);
+                os.flush();
+            }
 
             ObjectInputStream is = new ObjectInputStream(socket.getInputStream());
             directoryMap = (Map<String, List<String[]>>) is.readObject();
@@ -118,6 +117,7 @@ public class ServerRepository {
                     int progress = (int) ((bytesSent * 100) / file.length());
                     System.out.println(progress);
                 }
+                os.write(-1);
                 os.flush();
                 System.out.println("Final");
 
@@ -193,6 +193,18 @@ public class ServerRepository {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void closeConnection() {
+        try {
+            this.socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean socketIsRunning() {
+        return this.socket.isConnected();
     }
 
 }

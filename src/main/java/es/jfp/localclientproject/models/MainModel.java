@@ -26,8 +26,17 @@ public final class MainModel {
         }
     }
 
-    public TreeItem<FileItem> getTreeDirectory() {
-        Map<String, List<String[]>> tree = serverRepo.getDirectoryMap();
+    public TreeItem<FileItem> getTreeDirectory(boolean init) {
+        Map<String, List<String[]>> tree = serverRepo.getDirectoryMap(init);
+        tree.entrySet().forEach(e -> {
+            System.out.print(e.getKey() + "=> [");
+            e.getValue().forEach(a -> {
+                for (String s: a) {
+                    System.out.print(s);
+                }
+            });
+            System.out.println("]");
+        });
         return createTreeItem(tree);
     }
 
