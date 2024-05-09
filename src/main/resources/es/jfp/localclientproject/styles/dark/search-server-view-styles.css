@@ -1,6 +1,6 @@
 AnchorPane {
     -fx-background-color: #232323;
-    -fx-text-fill: white;
+    -fx-text-fill: #fff;
 }
 
 AnchorPane Button {
@@ -11,7 +11,7 @@ AnchorPane Button {
 }
 
 TableView, TableView * {
-    -fx-focus-color: black;
+    -fx-focus-color: #000;
 }
 
 .table-column, .table-column .label {
@@ -20,12 +20,12 @@ TableView, TableView * {
 
 .table-cell {
     -fx-background-color: #232323;
-    -fx-text-fill: white;
+    -fx-text-fill: #fff;
 }
 
 .table-row-cell:selected .table-cell {
     -fx-background-color: #383838;
-    -fx-text-fill: white;
+    -fx-text-fill: #fff;
 }
 
 .table-cell:odd {
@@ -34,21 +34,42 @@ TableView, TableView * {
 
 .table-column .label {
     -fx-background-color: #383838;
-    -fx-text-fill: white;
+    -fx-text-fill: #fff;
 }
 
 ToolBar, ToolBar *:not(Button) {
     -fx-background-color: transparent;
 }
 
-ToolBar Button, ToolBar ThemeButton, ToolBar LangComboBox, LangComboBox * {
+ToolBar Button, ToolBar ThemeButton {
     -fx-border-width: 1px;
-    -fx-border-color: white;
+    -fx-border-color: #fff;
     -fx-border-radius: 6px;
     -fx-background-color: transparent;
 }
 
+ToolBar LangComboBox .list-view {
+    -fx-border-width: 1px;
+    -fx-border-color: #fff;
+    -fx-border-radius: 6px;
+}
+
+ToolBar LangComboBox .list-cell: hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+ToolBar LangComboBox {
+    -fx-border-width: 1px;
+    -fx-border-color: #fff;
+    -fx-border-radius: 6px;
+}
+
+
 Button *, ThemeButton *, LangComboBox * {
-    -fx-fill: white;
+    -fx-fill: #ffffff;
     -fx-background-color: #232323;
+}
+
+.dialog-pane {
+    -fx-background-column: #000;
 }

@@ -1,82 +1,130 @@
-.wallpaper {
-    -fx-background-color: black;
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
+BorderPane {
+    -fx-background-color: #181818;
 }
 
-Button, DayNightButton {
+BorderPane * {
     -fx-background-color: transparent;
-    -fx-border-width: 0;
-    -fx-padding: 0;
-    -fx-cursor: hand;
 }
 
-Button *, DayNightButton * {
-    -fx-fill: white;
+MenuBar * {
+    -fx-text-fill: #ffffff;
 }
 
-Button *, DayNightButton * {
-    -fx-fill: rgb(255, 255, 255);
+SplitPane {
+    -fx-background-color: transparent;
 }
 
-.tree-view, .tree-view * {
-    -fx-background-color: rgba(0, 0, 0, 0.05);
-    -fx-font-size: 1.5em;
-    /*-fx-text-fill: rgb(255, 255, 255);*/
+ToolBar {
+    -fx-background-color: transparent;
+    -fx-padding: 0px 0px 0px 10px;
+}
+
+ToolBar Button, ToolBar ThemeButton, ToolBar LangComboBox {
+    -fx-border-size: 1px;
+    -fx-border-color: #ffffff;
+    -fx-border-radius: 8px;
+}
+
+ToolBar Button, ToolBar ThemeButton {
+    -fx-background-color: transparent;
+    -fx-pref-height: 2em;
+    -fx-pref-width: 2em;
+}
+
+ToolBar Button *, ToolBar ThemeButton * {
+    /*-fx-font-size: 10;*/
+    -fx-fill: #ffffff;
+}
+
+ToolBar LangComboBox {
+    -fx-pref-height: 2.5em;
+    -fx-pref-width: 10em;
+}
+
+ToolBar LangComboBox * {
+-fx-fill: #ffffff;
+    -fx-text-fill: #ffffff;
+    -fx-underline: false;
+}
+
+ToolBar LangComboBox .list-view {
+    -fx-border-width: 1px;
+    -fx-border-color: #fff;
+    -fx-border-radius: 6px;
+}
+
+ToolBar LangComboBox .list-cell: hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
 }
 
 .tree-view {
-    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 0);*/
+    -fx-padding: 10px;
+    -fx-background-color: #232323;
+}
+
+.tree-view:selected {
+    -fx-border-width: 0px;
+}
+
+.tree-view .cell {
+    -fx-font-size: 1.5em;
+    -fx-text-fill: #ffffff;
+}
+
+.tree-view .tree-cell .arrow {
+    -fx-background-color: #ffffff;
 }
 
 .tree-cell:selected {
     -fx-underline: true;
-    -fx-text-fill: rgb(255, 255, 255);
-}
-
-.tree-view .arrow {
-    -fx-background-color: white;
-}
-
-.list-cell {
-    -fx-background-color: rgba(0, 0, 0, 0.15);
-}
-
-.list-cell .label {
-    -fx-font-size: 2em;
-    -fx-text-fill: rgb(255, 255, 255);
-}
-
-.list-cell:not(:selected) {
-    -fx-background-color: rgba(0, 0, 0, 0.3);
-    -fx-font-size: 2em;
-    -fx-text-fill: rgb(255, 12, 22);
-}
-
-.separator {
-    -fx-background-color: transparent;
-    -fx-border-width: 0;
-}
-
-.split-pane:horizontal > .split-pane-divider {
-   -fx-background-color: transparent;
-   -fx-border-width: 0;
-}
-
-.bg-white-opaque-7 {
-    -fx-background-color: rgba(0, 0, 0, 0.7);
     -fx-text-fill: white;
 }
 
-.bg-white-opaque-1 {
-    -fx-background-color: rgba(0, 0, 0, 0.1);
+.list-view .virtual-flow {
+    -fx-background-color: #232323;
 }
 
-.bg-transparent {
+.list-view .list-cell:selected {
+    -fx-background-color: #202020;
+    -fx-underline: true;
+    -fx-text-fill: #ffffff;
+}
+
+.list-view .list-cell .label {
+    -fx-font-size: 2em;
+    -fx-text-fill: #ffffff;
+}
+
+.menu-button .arrow {
+    -fx-background-color: #ffffff;
+}
+
+.menu-button .context-menu {
+    -fx-background-color: #232323;
+    -fx-border-width: 1px;
+    -fx-border-color: #fff;
+    -fx-border-radius: 6px;
+}
+
+.menu-button .context-menu .menu-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.split-pane:horizontal > .split-pane-divider {
+   -fx-border-width: 0;
+}
+
+#directoryTreeTitleLabel, #actionsToolbar {
+    -fx-border-width: 1px 0px 1px 0px;
+    -fx-border-color: #fff;
     -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
 }
 
-.tree-text {
-    -fx-font-size: 1.5em;
+#file-icon {
+    -fx-image: url("../../images/icons/dark-file-regular.png");
+}
+
+#folder-icon {
+    -fx-image: url("../../images/icons/dark-folder-regular.png");
 }

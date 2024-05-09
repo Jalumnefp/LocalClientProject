@@ -17,31 +17,30 @@
         <items>
             <AnchorPane minHeight="0.0" minWidth="0.0">
                 <children>
-                    <ToolBar layoutX="7.0" layoutY="40.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <ToolBar fx:id="actionsToolbar" layoutX="7.0" layoutY="40.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                         <items>
                             <HBox prefHeight="0.0" prefWidth="5.0" />
                             <Button fx:id="userProfileButton">
                                 <graphic>
-                                    <Glyph fontFamily="FontAwesome" icon="USER" fontSize="24" />
+                                    <Glyph fontFamily="FontAwesome" icon="USER" />
                                 </graphic>
                             </Button>
                             <HBox prefHeight="0.0" prefWidth="10.0" />
                             <Button fx:id="createFolderActionIcon">
                                 <graphic>
-                                    <Glyph fontFamily="FontAwesome" icon="FOLDER" fontSize="24" />
+                                    <Glyph fontFamily="FontAwesome" icon="FOLDER" />
                                 </graphic>
                             </Button>
                             <HBox prefHeight="0.0" prefWidth="10.0" />
                             <Button fx:id="uploadActionIcon">
                                 <graphic>
-                                    <Glyph fontFamily="FontAwesome" icon="UPLOAD" fontSize="24" />
+                                    <Glyph fontFamily="FontAwesome" icon="UPLOAD" />
                                 </graphic>
                             </Button>
                             <HBox prefHeight="0.0" prefWidth="10.0" />
-                            <AnchorPane>
-                                <ThemeButton AnchorPane.rightAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.topAnchor="0" />
-                            </AnchorPane>
-                            <LangComboBox/>
+                                <ThemeButton />
+                            <HBox prefHeight="0.0" prefWidth="10.0" />
+                                <LangComboBox />
                         </items>
                     </ToolBar>
                     <TreeView fx:id="directoryTreeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">

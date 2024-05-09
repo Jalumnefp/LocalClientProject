@@ -63,7 +63,7 @@ public final class MainController {
         // guardar directorios en el modelo
         directoryTreeView.setRoot(MainModel.getInstance().getTreeDirectory(true));
         setUpDirectoryElements();
-        startDirectoryListenerThread();
+        //startDirectoryListenerThread();
 
         directoryTreeView.setOnMouseClicked(mouseEvent -> {
             TreeItem<FileItem> selectedItem = directoryTreeView.getSelectionModel().getSelectedItem();
@@ -196,7 +196,7 @@ public final class MainController {
         if (selectedDirectory != null) {
             model.downloadFile(selectedDirectory.getPath(), filePath.replace(rootPath, ""));
         }
-        System.out.println("wwwwwwwwwwwwwwww");
+        System.out.println("end download");
     }
 
     private void deleteFile(String filePath, boolean isDirectory) {

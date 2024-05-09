@@ -1,6 +1,7 @@
 package es.jfp.localclientproject.elements;
 
 import es.jfp.localclientproject.App;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import org.controlsfx.glyphfont.FontAwesome;

@@ -3,7 +3,7 @@ AnchorPane {
 }
 
 TableView, TableView * {
-    -fx-focus-color: white;
+    -fx-focus-color: #fff;
 }
 
 ToolBar, ToolBar *:not(Button) {

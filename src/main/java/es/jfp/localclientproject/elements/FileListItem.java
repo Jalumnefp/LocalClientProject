@@ -11,6 +11,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.Glyph;
 
 import java.io.InputStream;
 import java.util.function.BiConsumer;
@@ -36,7 +38,6 @@ public class FileListItem extends HBox {
 
     private Label setUpFileName(String name) {
         Label label = new Label();
-        label.setPrefHeight(28.0);
         label.setPrefWidth(Region.USE_COMPUTED_SIZE);
         label.setMaxWidth(500.0);
         label.setText(name);
@@ -46,12 +47,14 @@ public class FileListItem extends HBox {
     private ImageView setUpFileImage() {
         ImageView imageView = new ImageView();
         imageView.setFitHeight(52.0);
-        imageView.setFitWidth(78.0);
+        imageView.setFitWidth(52.0);
         imageView.setPickOnBounds(true);
         imageView.setPreserveRatio(true);
-        String url = "images/icons/" + (isDirectory ? "folder-regular.png" : "file-regular.png");
-        InputStream iconStream = App.class.getResourceAsStream(url);
-        imageView.setImage(new Image(iconStream));
+        //String url = "images/icons/" + (isDirectory ? "folder-regular.png" : "file-regular.png");
+        imageView.setId(!isDirectory ? "file-icon" : "folder-icon");
+        //InputStream iconStream = App.class.getResourceAsStream(url);
+
+        //imageView.setImage(new Image(iconStream));
         return imageView;
     }
 

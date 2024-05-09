@@ -1,5 +1,6 @@
 package es.jfp.localclientproject.elements;
 
+import es.jfp.localclientproject.App;
 import es.jfp.localclientproject.exceptions.PasswordComplexityException;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -35,5 +36,14 @@ public class LoginDialog extends org.controlsfx.dialog.LoginDialog {
 
         VBox vBox = (VBox) getDialogPane().getContent();
         vBox.getChildren().add(registerLabel);
+        setTheme();
+    }
+
+    private void setTheme() {
+        boolean dark = Boolean.parseBoolean(App.preferences.get("DARK_THEME", "false"));
+        if (dark) {
+            String darkTheme = App.class.getResource("styles/dark/generic-dark-styles.css").toExternalForm();
+            this.getDialogPane().getStylesheets().add(darkTheme);
+        }
     }
 }

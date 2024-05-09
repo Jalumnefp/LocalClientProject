@@ -1,35 +1,24 @@
-.wallpaper {
-    /*-fx-background-image: url('../images/eternal-forest.jpg');*/
-    /*-fx-background-color: lightblue;*/
-    -fx-background-size: cover;
-    -fx-background-position: center;
-    -fx-background-repeat: no-repeat;
+ToolBar {
+    -fx-padding: 0px 0px 0px 10px;
 }
 
-Button, DayNightButton {
-    -fx-background-color: transparent;
-    -fx-border-width: 0;
-    -fx-padding: 0;
-    -fx-cursor: hand;
+ToolBar Button, ToolBar ThemeButton {
+    -fx-pref-height: 2.5em;
+    -fx-pref-width: 2.5em;
 }
 
-Button *, DayNightButton * {
-    -fx-fill: black;
-    -fx-size: 55px;
+/*ToolBar Button *, ToolBar ThemeButton * {
+    -fx-font-size: 10;
+}*/
+
+ToolBar LangComboBox {
+    -fx-pref-height: 2.5em;
+    -fx-pref-width: 10em;
 }
 
-ListView {
-    -fx-background-color: rgba(255, 255, 255, 0.7);
-}
-
-TreeView, TreeView * {
-    -fx-background-color: rgba(180, 180, 180, 0.05);
+TreeView {
+    -fx-padding: 10px;
     -fx-font-size: 1.5em;
-    /*-fx-text-fill: rgb(255, 255, 255);*/
-}
-
-.tree-view {
-    /*-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 0);*/
 }
 
 .tree-cell:selected {
@@ -49,21 +38,27 @@ TreeView, TreeView * {
 .list-cell .label {
     -fx-font-size: 2em;
     -fx-background-color: transparent;
-    /*-fx-text-fill: rgb(255, 255, 255);*/
 }
 
-.list-cell .label:selected) {
+.list-cell .label:selected {
     -fx-background-color: #c2fcfa;
     -fx-font-size: 2em;
-    -fx-text-fill: rgb(255, 12, 22);
-}
-
-.split-pane:horizontal > .split-pane-divider {
-   -fx-background-color: transparent;
-   -fx-border-width: 0;
+    -fx-text-fill: #fff;
 }
 
 ToolBar, Label {
     -fx-background-color: rgba(255, 255, 255, 0.7);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 0);
+}
+
+#file-icon {
+    -fx-image: url("../images/icons/file-regular.png");
+}
+
+#file-icon.dark {
+    -fx-image: url("../images/icons/dark-file-regular.png");
+}
+
+#folder-icon {
+    -fx-image: url("../images/icons/folder-regular.png");
 }

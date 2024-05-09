@@ -1,5 +1,6 @@
 package es.jfp.localclientproject.elements;
 
+import es.jfp.localclientproject.App;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -50,6 +51,17 @@ public class UploadFileDialog extends Dialog {
 
         // Configurar el contenido del diálogo
         getDialogPane().setContent(dialogContent);
+
+        setTheme();
+    }
+
+    private void setTheme() {
+        boolean dark = Boolean.parseBoolean(App.preferences.get("DARK_THEME", "false"));
+        if (dark) {
+            String darkTheme = App.class.getResource("styles/dark/generic-dark-styles.css").toExternalForm();
+            this.getDialogPane().getStylesheets().clear();
+            this.getDialogPane().getStylesheets().add(darkTheme);
+        }
     }
 
 }
