@@ -4,6 +4,7 @@ import es.jfp.localclientproject.App;
 import es.jfp.localclientproject.data.FileItem;
 import es.jfp.localclientproject.elements.CreateNewFolderAlert;
 import es.jfp.localclientproject.elements.FileListItem;
+import es.jfp.localclientproject.elements.ProgressWidget;
 import es.jfp.localclientproject.models.MainModel;
 import es.jfp.localclientproject.repositorys.ServerRepository;
 import javafx.application.Platform;
@@ -29,6 +30,8 @@ import java.util.stream.Stream;
 public final class MainController {
 
     private final MainModel model = MainModel.getInstance();
+    @FXML
+    private ToolBar processToolBar;
     @FXML
     private  MenuItem menuItemReturnServerChooser;
     @FXML
@@ -60,10 +63,13 @@ public final class MainController {
 
     @FXML
     public void initialize() {
+        MainModel.getInstance().setProcessToolbar(processToolBar);
+
         // guardar directorios en el modelo
         directoryTreeView.setRoot(MainModel.getInstance().getTreeDirectory(true));
         setUpDirectoryElements();
         //startDirectoryListenerThread();
+
 
         directoryTreeView.setOnMouseClicked(mouseEvent -> {
             TreeItem<FileItem> selectedItem = directoryTreeView.getSelectionModel().getSelectedItem();
@@ -227,6 +233,14 @@ public final class MainController {
     private String getPath(String path) {
         String[] pathParts = path.split("/");
         return pathParts[pathParts.length - 1];
+    }
+
+    public void createProgressBar() {
+        Platform.runLater(() -> {
+            ProgressBar progressBar = new ProgressBar();
+            progressBar.setPrefHeight(100);
+            processToolBar.getItems().add(progressBar);
+        });
     }
 
 }

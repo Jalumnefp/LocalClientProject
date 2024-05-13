@@ -1,7 +1,10 @@
 package es.jfp.localclientproject.models;
 
 import es.jfp.localclientproject.data.FileItem;
+import es.jfp.localclientproject.elements.ProgressWidget;
 import es.jfp.localclientproject.repositorys.ServerRepository;
+import javafx.application.Platform;
+import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 
 import java.io.ByteArrayOutputStream;
@@ -14,6 +17,7 @@ public final class MainModel {
     private final ServerRepository serverRepo = ServerRepository.getInstance();
 
     private File selectedFile;
+    private ToolBar procesToolbar;
 
     private MainModel() {}
 
@@ -24,6 +28,18 @@ public final class MainModel {
             }
             return instance;
         }
+    }
+
+    public void setProcessToolbar(ToolBar toolbar) {
+        this.procesToolbar = toolbar;
+    }
+
+    public void insertOnProcessToolbar(ProgressWidget progressWidget) {
+        Platform.runLater(() -> this.procesToolbar.getItems().add(progressWidget));
+    }
+
+    public void removeProgressWidget(ProgressWidget progressWidget) {
+        Platform.runLater(() -> procesToolbar.getItems().remove(progressWidget));
     }
 
     public TreeItem<FileItem> getTreeDirectory(boolean init) {

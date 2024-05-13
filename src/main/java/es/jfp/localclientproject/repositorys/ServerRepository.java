@@ -1,5 +1,10 @@
 package es.jfp.localclientproject.repositorys;
 
+import es.jfp.localclientproject.controllers.MainController;
+import es.jfp.localclientproject.elements.ProgressWidget;
+import es.jfp.localclientproject.models.MainModel;
+import javafx.application.Platform;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -91,6 +96,9 @@ public class ServerRepository {
         System.out.println("Client start upload to: " + file);
 
         Thread thread = new Thread(() -> {
+            ProgressWidget progressWidget = new ProgressWidget("Upload " + file.getName());
+
+            MainModel.getInstance().insertOnProcessToolbar(progressWidget);
             try (InputStream is = Files.newInputStream(file.toPath())) {
 
                 OutputStream os = new BufferedOutputStream(socket.getOutputStream());
@@ -114,8 +122,9 @@ public class ServerRepository {
                     os.flush();
                     bytesSent += bytesRead;
 
-                    int progress = (int) ((bytesSent * 100) / file.length());
-                    System.out.println(progress);
+                    int progress = (int) (((float) bytesSent / file.length()) * 100);
+
+                    Platform.runLater(() -> progressWidget.setBarProgress(progress));
                 }
                 os.write(-1);
                 os.flush();
@@ -127,6 +136,8 @@ public class ServerRepository {
         });
         thread.start();
     }
+
+
 
     public void downloadFile(String destinationPath, String path) {
 

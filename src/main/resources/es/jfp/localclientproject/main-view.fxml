@@ -43,9 +43,7 @@
                                 <LangComboBox />
                         </items>
                     </ToolBar>
-                    <TreeView fx:id="directoryTreeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
-
-                    </TreeView>
+                    <TreeView fx:id="directoryTreeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" />
                 </children>
             </AnchorPane>
             <AnchorPane minHeight="0.0" minWidth="0.0">
@@ -88,4 +86,11 @@
         </menus>
       </MenuBar>
    </top>
+    <bottom>
+        <ToolBar fx:id="processToolBar" prefHeight="40.0">
+            <items>
+                <HBox prefHeight="0.0" prefWidth="5.0" />
+            </items>
+        </ToolBar>
+    </bottom>
 </BorderPane>
