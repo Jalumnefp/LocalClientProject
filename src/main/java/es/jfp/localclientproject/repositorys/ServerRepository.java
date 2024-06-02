@@ -1,6 +1,6 @@
 package es.jfp.localclientproject.repositorys;
 
-import es.jfp.localclientproject.controllers.MainController;
+import es.jfp.SerialMap;
 import es.jfp.localclientproject.elements.ProgressWidget;
 import es.jfp.localclientproject.models.MainModel;
 import javafx.application.Platform;
@@ -11,10 +11,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ServerRepository {
 
@@ -37,23 +36,21 @@ public class ServerRepository {
         System.out.println(socket);
     }
 
-    public Map<String, List<String[]>> getDirectoryMap(boolean init) {
-        Map<String, List<String[]>> directoryMap = null;
+    public SerialMap getDirectoryMap() {
         try {
 
-            if (init) {
-                OutputStream os = new BufferedOutputStream(socket.getOutputStream());
-                os.write(11);
-                os.flush();
-            }
+            OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+            os.write(11);
+            os.flush();
 
             ObjectInputStream is = new ObjectInputStream(socket.getInputStream());
-            directoryMap = (Map<String, List<String[]>>) is.readObject();
+
+            return (SerialMap) is.readObject();
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return directoryMap;
+        return null;
     }
 
 
@@ -64,8 +61,11 @@ public class ServerRepository {
             DataInputStream is = new DataInputStream(socket.getInputStream());
 
             os.write(02);
+            os.flush();
             os.writeUTF(username);
+            os.flush();
             os.writeUTF(hashPassword);
+            os.flush();
 
             return is.readBoolean();
 
@@ -91,27 +91,37 @@ public class ServerRepository {
         }
     }
 
+    public void closeSession() {
+        try {
+            OutputStream os = socket.getOutputStream();
+
+            os.write(03);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void uploadFile(File file, String relativePath) {
 
         System.out.println("Client start upload to: " + file);
 
-        Thread thread = new Thread(() -> {
-            ProgressWidget progressWidget = new ProgressWidget("Upload " + file.getName());
+        ProgressWidget progressWidget = new ProgressWidget("Upload " + file.getName());
+
+        Thread uploadThread = new Thread(() -> {
 
             MainModel.getInstance().insertOnProcessToolbar(progressWidget);
             try (InputStream is = Files.newInputStream(file.toPath())) {
 
                 OutputStream os = new BufferedOutputStream(socket.getOutputStream());
 
-                String path = relativePath + file.getName();
-
                 os.write(21);
                 os.flush();
 
-                os.write(path.getBytes().length);
+                os.write(relativePath.getBytes().length);
                 os.flush();
 
-                os.write(path.getBytes());
+                os.write(relativePath.getBytes());
                 os.flush();
 
                 long bytesSent = 0;
@@ -134,14 +144,16 @@ public class ServerRepository {
                 e.printStackTrace();
             }
         });
-        thread.start();
+
+        progressWidget.setProcessThread(uploadThread);
     }
-
-
 
     public void downloadFile(String destinationPath, String path) {
 
-        new Thread(() -> {
+        ProgressWidget progressWidget = new ProgressWidget("Download " + Path.of(path).getFileName());
+        MainModel.getInstance().insertOnProcessToolbar(progressWidget);
+
+        Thread downloadThread = new Thread(() -> {
             try (OutputStream fos = Files.newOutputStream(Path.of(destinationPath))) {
 
                 OutputStream os = new BufferedOutputStream(socket.getOutputStream());
@@ -165,6 +177,10 @@ public class ServerRepository {
                     }
                     fos.write(buffer, 0, bytes);
                     fos.flush();
+                    bytesSent += bytes;
+                    int progress = (int) (((float) bytesSent / new File(path).length()) * 100);
+
+                    Platform.runLater(() -> progressWidget.setBarProgress(progress));
                 }
                 System.out.println("Final");
                 fos.flush();
@@ -172,7 +188,13 @@ public class ServerRepository {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+        });
+
+        progressWidget.setProcessThread(downloadThread);
+    }
+
+    public void downloadFolder(String destinationPath, String path) {
+        // descargar zip
     }
 
     public void deleteFile(String pathToDelete) {
@@ -181,6 +203,21 @@ public class ServerRepository {
             DataOutputStream os = new DataOutputStream(socket.getOutputStream());
 
             os.write(24);
+            os.flush();
+            os.writeUTF(pathToDelete);
+            os.flush();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteFolder(String pathToDelete) {
+        try {
+
+            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+
+            os.write(14);
             os.flush();
             os.writeUTF(pathToDelete);
             os.flush();

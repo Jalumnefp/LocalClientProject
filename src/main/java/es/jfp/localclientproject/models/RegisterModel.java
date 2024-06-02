@@ -23,6 +23,7 @@ public class RegisterModel {
 
     public boolean requestRegister(String username, String password) {
         try {
+            System.out.println(1);
             return ServerRepository.getInstance().registerUser(username, createPasswordHash(password));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);

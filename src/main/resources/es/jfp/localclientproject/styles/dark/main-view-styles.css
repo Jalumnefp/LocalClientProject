@@ -14,7 +14,7 @@ SplitPane {
     -fx-background-color: transparent;
 }
 
-ToolBar {
+.tool-bar {
     -fx-background-color: transparent;
     -fx-padding: 0px 0px 0px 10px;
 }
@@ -31,29 +31,29 @@ ToolBar Button, ToolBar ThemeButton {
     -fx-pref-width: 2em;
 }
 
-ToolBar Button *, ToolBar ThemeButton * {
-    /*-fx-font-size: 10;*/
+.tool-bar Button *, .tool-bar ThemeButton * {
     -fx-fill: #ffffff;
+    -fx-min-width: 13px;
 }
 
-ToolBar LangComboBox {
+.tool-bar LangComboBox {
     -fx-pref-height: 2.5em;
     -fx-pref-width: 10em;
 }
 
-ToolBar LangComboBox * {
+.tool-bar LangComboBox * {
 -fx-fill: #ffffff;
     -fx-text-fill: #ffffff;
     -fx-underline: false;
 }
 
-ToolBar LangComboBox .list-view {
+.tool-bar LangComboBox .list-view {
     -fx-border-width: 1px;
     -fx-border-color: #fff;
     -fx-border-radius: 6px;
 }
 
-ToolBar LangComboBox .list-cell: hover {
+.tool-bar LangComboBox .list-cell: hover {
     -fx-background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -114,11 +114,24 @@ ToolBar LangComboBox .list-cell: hover {
    -fx-border-width: 0;
 }
 
-#directoryTreeTitleLabel, #actionsToolbar {
+#directoryTreeTitleLabel, #actionsToolbar, #processToolBar {
     -fx-border-width: 1px 0px 1px 0px;
     -fx-border-color: #fff;
     -fx-background-color: transparent;
     -fx-text-fill: #ffffff;
+}
+
+ProgressWidget .progress-bar {
+    -fx-border-width: 1px;
+    -fx-border-color: #fff;
+}
+
+ProgressWidget .progress-bar .bar {
+    -fx-background-color: #fff;
+}
+
+ProgressWidget .label {
+    -fx-text-fill: #fff;
 }
 
 #file-icon {

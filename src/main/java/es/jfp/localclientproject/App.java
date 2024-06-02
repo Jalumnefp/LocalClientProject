@@ -1,5 +1,7 @@
 package es.jfp.localclientproject;
 
+import es.jfp.localclientproject.controllers.MainController;
+import es.jfp.localclientproject.repositorys.ServerRepository;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -19,14 +21,19 @@ import java.util.function.BooleanSupplier;
 public class App extends Application {
 
     public final static Preferences preferences = Preferences.userRoot();
-    private static Stage stage;
-    private static String currentUser;
-    private static String currentScene;
+    private static Stage stage = null;
+    private static String currentUser = null;
+    private static String currentScene = null;
 
 
     @Override
     public void start(Stage stage) throws IOException {
         App.stage = stage;
+
+        stage.setOnCloseRequest(windowEvent -> {
+            ServerRepository.getInstance().closeConnection();
+            System.out.println("END");
+        });
 
         loadSceneInRootStage("search-server-view", null);
 

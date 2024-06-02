@@ -5,6 +5,7 @@ module es.jfp.localclientproject {
     requires org.controlsfx.controls;
     requires javafx.graphics;
     requires java.prefs;
+    requires CustomSerializableObjects;
 
     opens es.jfp.localclientproject to javafx.fxml;
     exports es.jfp.localclientproject;

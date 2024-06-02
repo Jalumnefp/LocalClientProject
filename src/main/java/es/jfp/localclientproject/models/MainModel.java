@@ -1,5 +1,7 @@
 package es.jfp.localclientproject.models;
 
+import es.jfp.SerialFile;
+import es.jfp.SerialMap;
 import es.jfp.localclientproject.data.FileItem;
 import es.jfp.localclientproject.elements.ProgressWidget;
 import es.jfp.localclientproject.repositorys.ServerRepository;
@@ -7,7 +9,6 @@ import javafx.application.Platform;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.*;
 
@@ -42,22 +43,40 @@ public final class MainModel {
         Platform.runLater(() -> procesToolbar.getItems().remove(progressWidget));
     }
 
-    public TreeItem<FileItem> getTreeDirectory(boolean init) {
-        Map<String, List<String[]>> tree = serverRepo.getDirectoryMap(init);
-        tree.entrySet().forEach(e -> {
-            System.out.print(e.getKey() + "=> [");
-            e.getValue().forEach(a -> {
-                for (String s: a) {
-                    System.out.print(s);
-                }
-            });
-            System.out.println("]");
+    public TreeItem<FileItem> getTreeDirectory() {
+
+        SerialMap serialMap = serverRepo.getDirectoryMap();
+        return createTreeItem(serialMap.getRootFile());
+    }
+
+    private TreeItem<FileItem> createTreeItem(SerialFile rootFile) {
+        FileItem rootItem = new FileItem(rootFile.getFileName(), true);
+        TreeItem<FileItem> root = new TreeItem<>(rootItem);
+        List<TreeItem<FileItem>> children = createTreeItem(rootFile.getChildren());
+        root.getChildren().addAll(children);
+        return root;
+    }
+
+    private List<TreeItem<FileItem>> createTreeItem(List<SerialFile> files) {
+        List<TreeItem<FileItem>> treeItems = new LinkedList<>();
+        files.forEach(child -> {
+            FileItem fileItem = new FileItem(child.getFileName(), child.isFolder());
+            TreeItem<FileItem> treeItem = new TreeItem<>(fileItem);
+            if (child.isFolder()) {
+                List<TreeItem<FileItem>> children = createTreeItem(child.getChildren());
+                treeItem.getChildren().addAll(children);
+            }
+            treeItems.add(treeItem);
         });
-        return createTreeItem(tree);
+        return treeItems;
     }
 
     public void deleteFile(String path) {
         serverRepo.deleteFile(path);
+    }
+
+    public void deleteFolder(String path) {
+        serverRepo.deleteFolder(path);
     }
 
     public void createNewFolder(String path) {
@@ -84,7 +103,7 @@ public final class MainModel {
 
     }
 
-    private TreeItem<FileItem> createTreeItem(Map<String, List<String[]>> directorios) {
+    /*private TreeItem<FileItem> createTreeItem(Map<String, List<String[]>> directorios) {
         TreeItem<FileItem> root;
         if (directorios != null) {
             String rootName = directorios.get("ROOT").get(0)[0];
@@ -112,6 +131,6 @@ public final class MainModel {
             });
         }
         return items;
-    }
+    }*/
 
 }

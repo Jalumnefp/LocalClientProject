@@ -11,8 +11,9 @@ import org.controlsfx.glyphfont.Glyph;
 public class ProgressWidget extends HBox {
 
     private final String name;
-    ProgressBar progressBar;
-    Label progressLabel;
+    private final ProgressBar progressBar;
+    private final Label progressLabel;
+    private Thread progressThread;
 
     public ProgressWidget(String name) {
         this.name = name;
@@ -45,6 +46,7 @@ public class ProgressWidget extends HBox {
                 confirmDialog.setGraphic(null);
                 confirmDialog.setContentText("¿Seguro que quieres detener este proceso?\n" + name);
                 if (confirmDialog.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
+                    progressThread.interrupt();
                     selfDestruction();
                 }
             } else {
@@ -68,7 +70,13 @@ public class ProgressWidget extends HBox {
         if ((int)progress == 100) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("¡El proceso \"" + this.name + "\" ha finalizado!");
+            alert.show();
         }
+    }
+
+    public void setProcessThread(Thread thread) {
+        this.progressThread = thread;
+        this.progressThread.start();
     }
 
 }

@@ -4,7 +4,6 @@ import es.jfp.localclientproject.App;
 import es.jfp.localclientproject.data.FileItem;
 import es.jfp.localclientproject.elements.CreateNewFolderAlert;
 import es.jfp.localclientproject.elements.FileListItem;
-import es.jfp.localclientproject.elements.ProgressWidget;
 import es.jfp.localclientproject.models.MainModel;
 import es.jfp.localclientproject.repositorys.ServerRepository;
 import javafx.application.Platform;
@@ -20,16 +19,14 @@ import org.controlsfx.dialog.ExceptionDialog;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 
 public final class MainController {
 
     private final MainModel model = MainModel.getInstance();
+    @FXML
+    private Button reloadDirectorys;
     @FXML
     private ToolBar processToolBar;
     @FXML
@@ -59,6 +56,7 @@ public final class MainController {
     private ListView<FileListItem> currentDirectoryList;
 
     private String rootPath;
+    private Thread directoryListener;
 
 
     @FXML
@@ -66,7 +64,8 @@ public final class MainController {
         MainModel.getInstance().setProcessToolbar(processToolBar);
 
         // guardar directorios en el modelo
-        directoryTreeView.setRoot(MainModel.getInstance().getTreeDirectory(true));
+        directoryTreeView.setRoot(MainModel.getInstance().getTreeDirectory());
+        directoryTreeView.setShowRoot(true);
         setUpDirectoryElements();
         //startDirectoryListenerThread();
 
@@ -100,6 +99,14 @@ public final class MainController {
             alert.showAndWait();
         });
 
+        reloadDirectorys.setOnMouseClicked(mouseEvent -> {
+            TreeItem<FileItem> directoryTreeItem = MainModel.getInstance().getTreeDirectory();
+            Platform.runLater(() -> {
+                directoryTreeView.setRoot(directoryTreeItem);
+                setUpDirectoryElements();
+            });
+        });
+
         createFolderActionIcon.setOnMouseClicked(mouseEvent -> showCreateNewFolderDialog());
 
         uploadActionIcon.setOnMouseClicked(mouseEvent -> showUploadFileDialog());
@@ -111,6 +118,9 @@ public final class MainController {
         menuItemReturnServerChooser.setOnAction(actionEvent -> {
             try {
                 ServerRepository.getInstance().closeConnection();
+                if (directoryListener!=null) {
+                    directoryListener.interrupt();
+                }
                 App.loadSceneInRootStage("search-server-view", stage -> {
                     stage.setWidth(400);
                     stage.setHeight(300);
@@ -122,22 +132,27 @@ public final class MainController {
         });
 
         menuItemClose.setOnAction(actionEvent -> {
-            Stage stage = (Stage) uploadActionIcon.getScene().getWindow();
+            if (directoryListener!=null) {
+                directoryListener.interrupt();
+            }Stage stage = (Stage) uploadActionIcon.getScene().getWindow();
             stage.close();
         });
 
     }
 
     private void startDirectoryListenerThread() {
-        new Thread(() -> {
-            while (ServerRepository.getInstance().socketIsRunning()) {
-                TreeItem<FileItem> directoryTreeItem = MainModel.getInstance().getTreeDirectory(false);
-                Platform.runLater(() -> {
-                    directoryTreeView.setRoot(directoryTreeItem);
-                    setUpDirectoryElements();
-                });
-            }
-        }).start();
+        if (directoryListener == null) {
+            directoryListener = new Thread(() -> {
+                while (ServerRepository.getInstance().socketIsRunning()) {
+                    TreeItem<FileItem> directoryTreeItem = MainModel.getInstance().getTreeDirectory();
+                    Platform.runLater(() -> {
+                        directoryTreeView.setRoot(directoryTreeItem);
+                        setUpDirectoryElements();
+                    });
+                }
+            });
+            directoryListener.start();
+        }
     }
 
     private void setUpDirectoryElements() {
@@ -153,29 +168,6 @@ public final class MainController {
             String path = directoryTreeTitleLabel.getText() + '/' + folderName.get();
             model.createNewFolder(path.replace(rootPath, ""));
         }
-    }
-
-    private void showUploadFileDialog() {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("upload-file-view.fxml"));
-            fxmlLoader.setResources(ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings_es"));
-            Stage stage = new Stage();
-            Scene scene = new Scene(fxmlLoader.load());
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.setTitle("Upload file");
-            stage.showAndWait();
-            File selectedFile = model.getFileToModel();
-            if (selectedFile != null) {
-                String path = directoryTreeTitleLabel.getText() + '/' + selectedFile.getName();
-                model.uploadFile(selectedFile, path.replace(rootPath, ""));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            ExceptionDialog exceptionDialog = new ExceptionDialog(e);
-            exceptionDialog.showAndWait();
-        }
-
     }
 
     private void updateCurrentDirectoryList(ObservableList<TreeItem<FileItem>> children) {
@@ -205,15 +197,33 @@ public final class MainController {
         System.out.println("end download");
     }
 
+    private void showUploadFileDialog() {
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(App.getRootStage());
+
+        if (selectedFile != null) {
+            String path = directoryTreeTitleLabel.getText() + '/' + selectedFile.getName();
+            model.uploadFile(selectedFile, path.replace(rootPath, ""));
+        }
+
+    }
+
     private void deleteFile(String filePath, boolean isDirectory) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("¿Estas seguro/a de que quieres eliminar: " + getPath(filePath));
+        alert.setContentText("¿Estas seguro/a de que quieres eliminar: " + getPath(filePath) + '?');
         alert.setGraphic(null);
         alert.setHeaderText(null);
         alert.setTitle("¡Ojo!");
         if (alert.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
             if (isDirectory) {
-                // drct
+                Alert alert2 = new Alert(Alert.AlertType.CONFIRMATION);
+                alert2.setContentText("Al eliminar una carpeta se eliminará su contenido. ¿Quieres proseguir?");
+                alert2.setGraphic(null);
+                alert2.setHeaderText(null);
+                alert2.setTitle("¡Ojo!");
+                if (alert2.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
+                    model.deleteFolder(filePath.replace(rootPath, ""));
+                }
             } else {
                 model.deleteFile(filePath.replace(rootPath, ""));
             }

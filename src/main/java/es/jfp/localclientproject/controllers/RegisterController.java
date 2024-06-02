@@ -6,6 +6,7 @@ import es.jfp.localclientproject.models.RegisterModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
@@ -26,15 +27,12 @@ public class RegisterController {
     @FXML
     private CustomPasswordField repeatPasswordCustomTextField;
     @FXML
-    private ProgressBar registerProgressBar;
-    @FXML
     private Button goBackButton;
 
     @FXML
     private void initialize() {
 
         registerButton.setOnAction(actionEvent -> {
-            registerProgressBar.setVisible(true);
             String username = usernameCustomTextField.getText();
             String password = passwordCustomTextField.getText();
             if (RegisterModel.getInstance().requestRegister(username, password)) {
@@ -42,7 +40,9 @@ public class RegisterController {
                 Stage stage = (Stage) registerButton.getParent().getScene().getWindow();
                 stage.close();
             } else {
-                registerProgressBar.setVisible(false);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("El usuario no ha podido registrarse");
+                alert.showAndWait();
             }
         });
 

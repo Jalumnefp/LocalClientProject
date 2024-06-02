@@ -5,6 +5,7 @@ import es.jfp.localclientproject.models.LoginModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -21,8 +22,6 @@ public class LoginController {
     @FXML
     private Label registerUserLabel;
     @FXML
-    private ProgressBar loginProgressBar;
-    @FXML
     private Button loginButton;
     @FXML
     private CustomPasswordField passwordCustomTextField;
@@ -33,16 +32,17 @@ public class LoginController {
     private void initialize() {
 
         loginButton.setOnAction(actionEvent -> {
-            //loginProgressBar.setProgress(-1);
-            loginProgressBar.setVisible(true);
             String username = usernameCustomTextField.getText();
             String password = passwordCustomTextField.getText();
             if (LoginModel.getInstance().requestLogin(username, password)) {
+                System.out.println("iniciando sesión en el controller");
                 App.setCurrentUser(username);
                 Stage stage = (Stage) loginButton.getParent().getScene().getWindow();
                 stage.close();
             } else {
-                loginProgressBar.setVisible(false);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Usuario o contraseña incorrectos");
+                alert.showAndWait();
             }
         });
 

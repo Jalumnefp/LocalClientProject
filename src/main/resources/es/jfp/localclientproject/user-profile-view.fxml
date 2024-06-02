@@ -3,10 +3,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.UserProfileController">
    <children>
-      <Label text="USERNAME" prefWidth="-Infinity" />
-      <Button mnemonicParsing="false" text="Cambiar contraseña" />
-      <Button mnemonicParsing="false" text="Cerrar sesión" />
+      <Label fx:id="usernameLabel" text="USERNAME" />
+      <Button fx:id="changePassword" mnemonicParsing="false" text="Cambiar contraseña" />
+      <Button fx:id="closeSessionButton" mnemonicParsing="false" text="Cerrar sesión" />
    </children>
 </VBox>
