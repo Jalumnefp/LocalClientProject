@@ -18,6 +18,7 @@ import java.util.ResourceBundle;
 
 public class RegisterController {
 
+    private final ResourceBundle resourceBundle = App.getResourceBundle();
     @FXML
     private Button registerButton;
     @FXML
@@ -41,7 +42,7 @@ public class RegisterController {
                 stage.close();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("El usuario no ha podido registrarse");
+                alert.setContentText(resourceBundle.getString("register_failed_advise"));
                 alert.showAndWait();
             }
         });

@@ -1,5 +1,6 @@
 package es.jfp.localclientproject.elements;
 
+import es.jfp.localclientproject.App;
 import es.jfp.localclientproject.models.MainModel;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -8,8 +9,11 @@ import javafx.scene.paint.Color;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
 
+import java.util.ResourceBundle;
+
 public class ProgressWidget extends HBox {
 
+    private final ResourceBundle resourceBundle = App.getResourceBundle();
     private final String name;
     private final ProgressBar progressBar;
     private final Label progressLabel;
@@ -44,7 +48,7 @@ public class ProgressWidget extends HBox {
                 confirmDialog.setTitle("¡Ojo!");
                 confirmDialog.setHeaderText(null);
                 confirmDialog.setGraphic(null);
-                confirmDialog.setContentText("¿Seguro que quieres detener este proceso?\n" + name);
+                confirmDialog.setContentText(resourceBundle.getString("interrupt_process_question") + ' ' + name);
                 if (confirmDialog.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
                     progressThread.interrupt();
                     selfDestruction();
@@ -69,7 +73,7 @@ public class ProgressWidget extends HBox {
         this.progressBar.setProgress(progress / 100);
         if ((int)progress == 100) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("¡El proceso \"" + this.name + "\" ha finalizado!");
+            alert.setContentText(String.format(resourceBundle.getString("process_end_advise"), this.name));
             alert.show();
         }
     }

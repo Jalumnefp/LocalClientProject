@@ -2,23 +2,32 @@ package es.jfp.localclientproject.models;
 
 import es.jfp.SerialFile;
 import es.jfp.SerialMap;
+import es.jfp.localclientproject.controllers.MainController;
 import es.jfp.localclientproject.data.FileItem;
 import es.jfp.localclientproject.elements.ProgressWidget;
 import es.jfp.localclientproject.repositorys.ServerRepository;
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 
 import java.io.File;
-import java.util.*;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 public final class MainModel {
+
 
     private static MainModel instance;
     private final ServerRepository serverRepo = ServerRepository.getInstance();
 
     private File selectedFile;
     private ToolBar procesToolbar;
+    private Method controllerUpdateDirectory;
 
     private MainModel() {}
 
@@ -87,6 +96,8 @@ public final class MainModel {
         serverRepo.uploadFile(file, relativePath);
     }
 
+
+
     public void downloadFile(String destination, String filePath) {
         serverRepo.downloadFile(destination, filePath);
     }
@@ -99,8 +110,18 @@ public final class MainModel {
         return selectedFile;
     }
 
-    public void updateProgressBar() {
+    public void requestControllerUpdateDirectory() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("main-view.fxml"));
+            MainController controller = loader.getController();
+            this.controllerUpdateDirectory.invoke(controller);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public void setControllerUpdateDirectory(Method controllerUpdateDirectory) {
+        this.controllerUpdateDirectory = controllerUpdateDirectory;
     }
 
     /*private TreeItem<FileItem> createTreeItem(Map<String, List<String[]>> directorios) {

@@ -23,8 +23,6 @@ public class LangComboBox extends ComboBox<String> {
     public LangComboBox() {
         super();
 
-        this.context = context;
-
         this.setItems(FXCollections.observableArrayList("CAS", "ENG", "VAL"));
 
         String langPref = App.preferences.get("LANGUAGE", "es_ES");
@@ -49,7 +47,5 @@ public class LangComboBox extends ComboBox<String> {
         });
 
     }
-
-
 
 }

@@ -24,6 +24,7 @@ public class App extends Application {
     private static Stage stage = null;
     private static String currentUser = null;
     private static String currentScene = null;
+    private static Locale currentLocale = null;
 
 
     @Override
@@ -53,6 +54,7 @@ public class App extends Application {
         }
         // Obtener preferencias de usuario
         Locale lang = Locale.of(preferences.get("LANGUAGE", "es_ES"));
+        setCurrentLocale(lang);
         boolean dark = Boolean.parseBoolean(preferences.get("DARK_THEME", "false"));
         // Cargar fxml inicial
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(view + ".fxml"));
@@ -76,6 +78,12 @@ public class App extends Application {
     }
     public static void setCurrentUser(String currentUser) {
         App.currentUser = currentUser;
+    }
+    public static ResourceBundle getResourceBundle() {
+        return ResourceBundle.getBundle("es/jfp/localclientproject/bundle/strings", currentLocale);
+    }
+    public static void setCurrentLocale(Locale currentLocale) {
+        App.currentLocale = currentLocale;
     }
 
     public static void main(String[] args) {

@@ -19,12 +19,14 @@ import org.controlsfx.dialog.ExceptionDialog;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.*;
 
 
 public final class MainController {
 
     private final MainModel model = MainModel.getInstance();
+    private final ResourceBundle resourceBundle = App.getResourceBundle();
     @FXML
     private Button reloadDirectorys;
     @FXML
@@ -61,11 +63,13 @@ public final class MainController {
 
     @FXML
     public void initialize() {
-        MainModel.getInstance().setProcessToolbar(processToolBar);
+        model.setProcessToolbar(processToolBar);
+        try {
+            model.setControllerUpdateDirectory(this.getClass().getMethod("setUpDirectoryElements"));
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
 
-        // guardar directorios en el modelo
-        directoryTreeView.setRoot(MainModel.getInstance().getTreeDirectory());
-        directoryTreeView.setShowRoot(true);
         setUpDirectoryElements();
         //startDirectoryListenerThread();
 
@@ -155,7 +159,8 @@ public final class MainController {
         }
     }
 
-    private void setUpDirectoryElements() {
+    public void setUpDirectoryElements() {
+        directoryTreeView.setRoot(model.getTreeDirectory());
         updateCurrentDirectoryList(directoryTreeView.getRoot().getChildren());
         rootPath = directoryTreeView.getRoot().getValue().getName();
         directoryTreeTitleLabel.setText(rootPath);
@@ -179,7 +184,9 @@ public final class MainController {
                 currentDirectoryList.getItems().add(item);
             }
         } else {
-            currentDirectoryList.getItems().add(new FileListItem("EMPTY FOLDER", null, true, null, null));
+            currentDirectoryList.getItems().add(new FileListItem(
+                    resourceBundle.getString("empty_folder"),
+                    null, true, null, null));
         }
         currentDirectoryList.refresh();
     }
@@ -187,14 +194,35 @@ public final class MainController {
     private void downloadFile(String filePath) {
         String fileName = getPath(filePath);
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName(fileName);
-        File selectedDirectory = fileChooser.showSaveDialog(App.getRootStage());
+        if (fileName != null && Path.of(fileName).toFile().isFile()) {
 
-        if (selectedDirectory != null) {
-            model.downloadFile(selectedDirectory.getPath(), filePath.replace(rootPath, ""));
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialFileName(fileName);
+            File selectedDirectory = fileChooser.showSaveDialog(App.getRootStage());
+            if (selectedDirectory.isFile()) {
+                model.downloadFile(selectedDirectory.getPath(), filePath.replace(rootPath, ""));
+            }
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("¡Ojo!");
+            alert.setHeaderText(null);
+            alert.setContentText(resourceBundle.getString("to_download_folder_message"));
+            alert.showAndWait();
         }
+
         System.out.println("end download");
+    }
+
+    @Deprecated
+    public void showResultAlert(String action, String ctx, boolean success) {
+        Alert alert = new Alert(success ? Alert.AlertType.INFORMATION : Alert.AlertType.ERROR);
+        alert.setHeaderText(null);
+        alert.setContentText(String.format(success ?
+                "La operación %s en %s ha sido realizada con éxito" :
+                "Ha habido un error con la operación %s en %s",
+                action, ctx
+        ));
+        alert.showAndWait();
     }
 
     private void showUploadFileDialog() {
@@ -210,14 +238,15 @@ public final class MainController {
 
     private void deleteFile(String filePath, boolean isDirectory) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("¿Estas seguro/a de que quieres eliminar: " + getPath(filePath) + '?');
+        alert.setContentText(String.format("¿%s: %s?",
+                resourceBundle.getString("delete_confirmation_message"), getPath(filePath)));
         alert.setGraphic(null);
         alert.setHeaderText(null);
         alert.setTitle("¡Ojo!");
         if (alert.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
             if (isDirectory) {
                 Alert alert2 = new Alert(Alert.AlertType.CONFIRMATION);
-                alert2.setContentText("Al eliminar una carpeta se eliminará su contenido. ¿Quieres proseguir?");
+                alert2.setContentText(resourceBundle.getString("folder_recursive_delete_advise"));
                 alert2.setGraphic(null);
                 alert2.setHeaderText(null);
                 alert2.setTitle("¡Ojo!");

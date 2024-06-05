@@ -1,11 +1,14 @@
 module es.jfp.localclientproject {
+    requires java.base;
+    requires java.prefs;
+    requires org.controlsfx.controls;
+    requires es.jfp;
+    requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
-    requires java.base;
-    requires org.controlsfx.controls;
     requires javafx.graphics;
-    requires java.prefs;
-    requires CustomSerializableObjects;
+
+    requires javafx.fxmlEmpty;
 
     opens es.jfp.localclientproject to javafx.fxml;
     exports es.jfp.localclientproject;

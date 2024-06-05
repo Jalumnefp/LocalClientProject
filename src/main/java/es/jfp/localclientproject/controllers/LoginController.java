@@ -19,6 +19,7 @@ import java.util.ResourceBundle;
 
 public class LoginController {
 
+    private final ResourceBundle resourceBundle = App.getResourceBundle();
     @FXML
     private Label registerUserLabel;
     @FXML
@@ -41,7 +42,7 @@ public class LoginController {
                 stage.close();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Usuario o contraseña incorrectos");
+                alert.setContentText(resourceBundle.getString("login_failed_advise"));
                 alert.showAndWait();
             }
         });

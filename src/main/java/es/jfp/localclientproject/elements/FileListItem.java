@@ -15,11 +15,13 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.Glyph;
 
 import java.io.InputStream;
+import java.util.ResourceBundle;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class FileListItem extends HBox {
 
+    private final ResourceBundle resourceBundle = App.getResourceBundle();
     private final boolean isDirectory;
     private final String path;
 
@@ -61,9 +63,9 @@ public class FileListItem extends HBox {
     private MenuButton setUpButton(Consumer<String> download, BiConsumer<String, Boolean> delete) {
         MenuButton button = new MenuButton();
         button.setStyle("-fx-font-size: 12px; -fx-background-color: transparent;");
-        MenuItem menuItemDownload = new MenuItem("Descargar");
+        MenuItem menuItemDownload = new MenuItem(resourceBundle.getString("download"));
         menuItemDownload.setOnAction(actionEvent -> download.accept(this.path));
-        MenuItem menuItemEliminar = new MenuItem("Eliminar");
+        MenuItem menuItemEliminar = new MenuItem(resourceBundle.getString("delete"));
         menuItemEliminar.setOnAction(actionEvent -> delete.accept(this.path, isDirectory));
         button.getItems().addAll(menuItemDownload, menuItemEliminar);
 

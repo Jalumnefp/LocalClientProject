@@ -25,6 +25,8 @@ import java.util.ResourceBundle;
 
 public class SearchServerController {
 
+    private final ResourceBundle resourceBundle = App.getResourceBundle();
+
     @FXML
     private TableView<Server> serversTableView;
     @FXML
@@ -98,7 +100,7 @@ public class SearchServerController {
         if (selectedServer!=null) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Ojo!");
-            alert.setContentText(String.format("Estás seguro/a de que quieres borrar el servidor: %s?", selectedServer));
+            alert.setContentText(String.format("%s: %s?", resourceBundle.getString("delete_server_question"), selectedServer));
             if (alert.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
                 serverList.remove(selectedServer);
                 ServerConnectionModel.getInstance().requestSaveServers(serverList);

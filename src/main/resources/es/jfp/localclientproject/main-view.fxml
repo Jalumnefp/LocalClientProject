@@ -38,7 +38,7 @@
                                 </graphic>
                             </Button>
                             <HBox prefHeight="0.0" prefWidth="10.0" />
-                            <Button fx:id="reloadDirectorys">
+                        <Button fx:id="reloadDirectorys">
                                 <graphic>
                                     <Glyph fontFamily="FontAwesome" icon="USER" />
                                 </graphic>

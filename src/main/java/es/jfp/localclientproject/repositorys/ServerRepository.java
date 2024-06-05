@@ -6,14 +6,12 @@ import es.jfp.localclientproject.models.MainModel;
 import javafx.application.Platform;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ServerRepository {
 
@@ -111,132 +109,146 @@ public class ServerRepository {
         Thread uploadThread = new Thread(() -> {
 
             MainModel.getInstance().insertOnProcessToolbar(progressWidget);
-            try (InputStream is = Files.newInputStream(file.toPath())) {
+            synchronized (this) {
+                try (InputStream is = Files.newInputStream(file.toPath())) {
 
-                OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+                    OutputStream os = new BufferedOutputStream(socket.getOutputStream());
 
-                os.write(21);
-                os.flush();
-
-                os.write(relativePath.getBytes().length);
-                os.flush();
-
-                os.write(relativePath.getBytes());
-                os.flush();
-
-                long bytesSent = 0;
-                byte[] buffer = new byte[2048];
-                int bytesRead;
-                while ((bytesRead = is.read(buffer)) != -1) {
-                    os.write(buffer, 0, bytesRead);
+                    os.write(21);
                     os.flush();
-                    bytesSent += bytesRead;
 
-                    int progress = (int) (((float) bytesSent / file.length()) * 100);
+                    os.write(relativePath.getBytes().length);
+                    os.flush();
 
-                    Platform.runLater(() -> progressWidget.setBarProgress(progress));
+                    os.write(relativePath.getBytes());
+                    os.flush();
+
+                    long bytesSent = 0;
+                    byte[] buffer = new byte[2048];
+                    int bytesRead;
+                    while ((bytesRead = is.read(buffer)) != -1) {
+                        os.write(buffer, 0, bytesRead);
+                        os.flush();
+                        bytesSent += bytesRead;
+
+                        int progress = (int) (((float) bytesSent / file.length()) * 100);
+
+                        Platform.runLater(() -> progressWidget.setBarProgress(progress));
+                    }
+                    os.write(-1);
+                    os.flush();
+                    System.out.println("Final upload");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                os.write(-1);
-                os.flush();
-                System.out.println("Final");
-
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+
         });
 
         progressWidget.setProcessThread(uploadThread);
     }
 
-    public void downloadFile(String destinationPath, String path) {
+    public synchronized void downloadFile(String destinationPath, String path) {
 
         ProgressWidget progressWidget = new ProgressWidget("Download " + Path.of(path).getFileName());
-        MainModel.getInstance().insertOnProcessToolbar(progressWidget);
 
         Thread downloadThread = new Thread(() -> {
-            try (OutputStream fos = Files.newOutputStream(Path.of(destinationPath))) {
+            MainModel.getInstance().insertOnProcessToolbar(progressWidget);
+            synchronized (this) {
+                try (OutputStream fos = Files.newOutputStream(Path.of(destinationPath))) {
 
-                OutputStream os = new BufferedOutputStream(socket.getOutputStream());
-                InputStream is = new BufferedInputStream(socket.getInputStream());
+                    OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+                    InputStream is = new BufferedInputStream(socket.getInputStream());
 
-                os.write(22);
-                os.flush();
+                    os.write(22);
+                    os.flush();
 
-                os.write(path.getBytes().length);
-                os.flush();
+                    os.write(path.getBytes().length);
+                    os.flush();
 
-                os.write(path.getBytes());
-                os.flush();
+                    os.write(path.getBytes());
+                    os.flush();
 
-                long bytesSent = 0;
-                byte[] buffer = new byte[2048];
-                int bytes;
-                while ((bytes=is.read(buffer))!=-1) {
-                    if (bytes == 1 && buffer[0] == -1) {
-                        break;
+                    long bytesSent = 0;
+                    byte[] buffer = new byte[2048];
+                    int bytes;
+                    while ((bytes=is.read(buffer))!=-1) {
+                        if (bytes == 1 && buffer[0] == -1) {
+                            break;
+                        }
+                        fos.write(buffer, 0, bytes);
+                        fos.flush();
+                        bytesSent += bytes;
+                        int progress = (int) (((float) bytesSent / new File(path).length()) * 100);
+
+                        Platform.runLater(() -> progressWidget.setBarProgress(progress));
                     }
-                    fos.write(buffer, 0, bytes);
+                    System.out.println("Final download");
                     fos.flush();
-                    bytesSent += bytes;
-                    int progress = (int) (((float) bytesSent / new File(path).length()) * 100);
 
-                    Platform.runLater(() -> progressWidget.setBarProgress(progress));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                System.out.println("Final");
-                fos.flush();
-
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         });
 
         progressWidget.setProcessThread(downloadThread);
     }
 
-    public void downloadFolder(String destinationPath, String path) {
-        // descargar zip
+    public synchronized void downloadFolder(String destinationPath, String path) {
+
+
     }
 
-    public void deleteFile(String pathToDelete) {
+    public synchronized void deleteFile(String pathToDelete) {
         try {
 
-            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+            synchronized (this) {
+                DataOutputStream os = new DataOutputStream(socket.getOutputStream());
 
-            os.write(24);
-            os.flush();
-            os.writeUTF(pathToDelete);
-            os.flush();
+                os.write(24);
+                os.flush();
+                os.writeUTF(pathToDelete);
+                os.flush();
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void deleteFolder(String pathToDelete) {
+    public synchronized void deleteFolder(String pathToDelete) {
         try {
 
-            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+            synchronized (this) {
+                DataOutputStream os = new DataOutputStream(socket.getOutputStream());
 
-            os.write(14);
-            os.flush();
-            os.writeUTF(pathToDelete);
-            os.flush();
+                os.write(14);
+                os.flush();
+                os.writeUTF(pathToDelete);
+                os.flush();
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void createNewFolder(String folderPath) {
+    public synchronized void createNewFolder(String folderPath) {
         try {
 
-            DataOutputStream os = new DataOutputStream(socket.getOutputStream());
+            synchronized (this) {
+                DataOutputStream os = new DataOutputStream(socket.getOutputStream());
 
-            os.write(12);
-            os.flush();
+                os.write(12);
+                os.flush();
 
-            os.writeUTF(folderPath);
-            os.flush();
+                os.writeUTF(folderPath);
+                os.flush();
+
+                MainModel.getInstance().requestControllerUpdateDirectory();
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -244,10 +256,12 @@ public class ServerRepository {
     }
 
     public void closeConnection() {
-        try {
-            this.socket.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (this.socket != null) {
+            try {
+                this.socket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

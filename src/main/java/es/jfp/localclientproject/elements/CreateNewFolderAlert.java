@@ -6,15 +6,18 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 
 import java.util.Optional;
+import java.util.ResourceBundle;
 
 
 public class CreateNewFolderAlert extends TextInputDialog {
 
+    private final ResourceBundle resourceBundle = App.getResourceBundle();
+
     public CreateNewFolderAlert() {
-        setTitle("Crear nueva carpeta");
+        setTitle(resourceBundle.getString("create_new_folder_text"));
         setHeaderText(null);
         setGraphic(null);
-        setContentText("Nombre de la carpeta:");
+        setContentText(resourceBundle.getString("input_name_file_text"));
         Button aceptarButton = (Button) getDialogPane().lookupButton(ButtonType.OK);
         aceptarButton.setDisable(true);
         getEditor().textProperty().addListener((observable, oldValue, newValue) -> aceptarButton.setDisable(newValue.isEmpty()));
