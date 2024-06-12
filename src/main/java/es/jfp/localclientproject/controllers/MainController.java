@@ -2,6 +2,7 @@ package es.jfp.localclientproject.controllers;
 
 import es.jfp.localclientproject.App;
 import es.jfp.localclientproject.data.FileItem;
+import es.jfp.localclientproject.data.Server;
 import es.jfp.localclientproject.elements.CreateNewFolderAlert;
 import es.jfp.localclientproject.elements.FileListItem;
 import es.jfp.localclientproject.models.MainModel;
@@ -10,7 +11,6 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -20,7 +20,8 @@ import org.controlsfx.dialog.ExceptionDialog;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 
 public final class MainController {
@@ -64,11 +65,6 @@ public final class MainController {
     @FXML
     public void initialize() {
         model.setProcessToolbar(processToolBar);
-        try {
-            model.setControllerUpdateDirectory(this.getClass().getMethod("setUpDirectoryElements"));
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
 
         setUpDirectoryElements();
         //startDirectoryListenerThread();
@@ -86,6 +82,7 @@ public final class MainController {
 
         userProfileButton.setOnMouseClicked(mouseEvent -> {
             Alert alert = null;
+            boolean oldState = App.getCurrentUser() == null;
             try {
                 String fxmlUrl = App.getCurrentUser() != null ? "user-profile-view.fxml" : "login-view.fxml";
                 FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxmlUrl));
@@ -101,15 +98,14 @@ public final class MainController {
                 e.printStackTrace();
             }
             alert.showAndWait();
+
+            boolean newState = App.getCurrentUser() == null;
+            if (oldState != newState) {
+                setUpDirectoryElements();
+            }
         });
 
-        reloadDirectorys.setOnMouseClicked(mouseEvent -> {
-            TreeItem<FileItem> directoryTreeItem = MainModel.getInstance().getTreeDirectory();
-            Platform.runLater(() -> {
-                directoryTreeView.setRoot(directoryTreeItem);
-                setUpDirectoryElements();
-            });
-        });
+        reloadDirectorys.setOnMouseClicked(mouseEvent -> Platform.runLater(this::setUpDirectoryElements));
 
         createFolderActionIcon.setOnMouseClicked(mouseEvent -> showCreateNewFolderDialog());
 
@@ -144,15 +140,13 @@ public final class MainController {
 
     }
 
+
+
     private void startDirectoryListenerThread() {
         if (directoryListener == null) {
             directoryListener = new Thread(() -> {
                 while (ServerRepository.getInstance().socketIsRunning()) {
-                    TreeItem<FileItem> directoryTreeItem = MainModel.getInstance().getTreeDirectory();
-                    Platform.runLater(() -> {
-                        directoryTreeView.setRoot(directoryTreeItem);
-                        setUpDirectoryElements();
-                    });
+                    Platform.runLater(this::setUpDirectoryElements);
                 }
             });
             directoryListener.start();
@@ -160,18 +154,60 @@ public final class MainController {
     }
 
     public void setUpDirectoryElements() {
-        directoryTreeView.setRoot(model.getTreeDirectory());
+        TreeItem<FileItem> treeItem = model.getTreeDirectory();
+        directoryTreeView.setRoot(treeItem);
         updateCurrentDirectoryList(directoryTreeView.getRoot().getChildren());
         rootPath = directoryTreeView.getRoot().getValue().getName();
         directoryTreeTitleLabel.setText(rootPath);
     }
+
+    /*private void delete(Path path) {
+        TreeItem<FileItem> treeItem = getElementByDir(path, directoryTreeView.getRoot());
+        System.out.println(treeItem.getValue());
+        if (treeItem != null) {
+            directoryTreeView.getRoot().getChildren().remove(treeItem);
+        }
+    }
+
+    private void create(TreeItem<FileItem> fileItem) {
+        Path parentDir = fileItem.getValue().getPath().getParent();
+        TreeItem<FileItem> treeItem = getElementByDir(parentDir, directoryTreeView.getRoot());
+        if (treeItem != null) {
+            treeItem.getChildren().add(fileItem);
+        }
+    }
+
+    private TreeItem<FileItem> getElementByDir(Path elementDir, TreeItem<FileItem> parent) {
+        if (parent.getValue().getPath() == null ||parent.getValue().getPath().equals(elementDir)) {
+            return parent;
+        }
+        for (TreeItem<FileItem> child: parent.getChildren()) {
+            TreeItem<FileItem> element = getElementByDir(elementDir, child);
+            if (element != null) {
+                return element;
+            }
+        }
+        return null;
+    }*/
 
     private void showCreateNewFolderDialog() {
         CreateNewFolderAlert createNewFolderAlert = new CreateNewFolderAlert();
         Optional<String> folderName = createNewFolderAlert.showAndWait();
         if (folderName.isPresent()) {
             String path = directoryTreeTitleLabel.getText() + '/' + folderName.get();
-            model.createNewFolder(path.replace(rootPath, ""));
+
+            boolean successful = model.createNewFolder(path.replace(rootPath, ""));
+
+            if (successful) {
+                Path parentPath = Path.of(directoryTreeTitleLabel.getText());
+                Optional<TreeItem<FileItem>> parent = findItemByPath(directoryTreeView.getRoot(), parentPath.toString());
+                if (parent.isPresent()) {
+                    Path folderPath = Path.of(path);
+                    FileItem fileItem = new FileItem(folderPath.getFileName().toString(), true, folderPath, 0);
+                    TreeItem<FileItem> newTreeItem = new TreeItem<>(fileItem);
+                    addOptimisticFile(parent.get(), newTreeItem);
+                }
+            }
         }
     }
 
@@ -181,6 +217,7 @@ public final class MainController {
             for (TreeItem<FileItem> child: children) {
                 FileListItem item = new FileListItem(
                         child.getValue().getName(), getPath(child), child.getValue().isDirectory(), this::downloadFile, this::deleteFile);
+
                 currentDirectoryList.getItems().add(item);
             }
         } else {
@@ -189,28 +226,6 @@ public final class MainController {
                     null, true, null, null));
         }
         currentDirectoryList.refresh();
-    }
-
-    private void downloadFile(String filePath) {
-        String fileName = getPath(filePath);
-
-        if (fileName != null && Path.of(fileName).toFile().isFile()) {
-
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setInitialFileName(fileName);
-            File selectedDirectory = fileChooser.showSaveDialog(App.getRootStage());
-            if (selectedDirectory.isFile()) {
-                model.downloadFile(selectedDirectory.getPath(), filePath.replace(rootPath, ""));
-            }
-        } else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("¡Ojo!");
-            alert.setHeaderText(null);
-            alert.setContentText(resourceBundle.getString("to_download_folder_message"));
-            alert.showAndWait();
-        }
-
-        System.out.println("end download");
     }
 
     @Deprecated
@@ -230,10 +245,38 @@ public final class MainController {
         File selectedFile = fileChooser.showOpenDialog(App.getRootStage());
 
         if (selectedFile != null) {
-            String path = directoryTreeTitleLabel.getText() + '/' + selectedFile.getName();
-            model.uploadFile(selectedFile, path.replace(rootPath, ""));
-        }
+            Path path = Path.of(directoryTreeTitleLabel.getText() + '/' + selectedFile.getName());
+            model.uploadFile(selectedFile, path.toString().replace(rootPath, ""));
 
+            new Thread(() -> {
+                Path parentPath = Path.of(directoryTreeTitleLabel.getText());
+                Optional<TreeItem<FileItem>> parent = findItemByPath(directoryTreeView.getRoot(), parentPath.toString());
+                if (parent.isPresent()) {
+                    FileItem fileItem = new FileItem(
+                            selectedFile.getName(),
+                            selectedFile.isDirectory(),
+                            Path.of(directoryTreeTitleLabel.getText(), selectedFile.getName()),
+                            selectedFile.length()
+                    );
+                    TreeItem<FileItem> newTreeItem = new TreeItem<>(fileItem);
+                    Platform.runLater(() -> addOptimisticFile(parent.get(), newTreeItem));
+                }
+            }).start();
+
+        }
+    }
+
+    private void addOptimisticFile(TreeItem<FileItem> parent, TreeItem<FileItem> file) {
+        parent.getChildren().add(file);
+        directoryTreeView.refresh();
+        updateCurrentDirectoryList(parent.getChildren());
+    }
+
+    private void removeOptimisticFile(TreeItem<FileItem> file) {
+        TreeItem<FileItem> parent = file.getParent();
+        parent.getChildren().remove(file);
+        directoryTreeView.refresh();
+        updateCurrentDirectoryList(parent.getChildren());
     }
 
     private void deleteFile(String filePath, boolean isDirectory) {
@@ -244,6 +287,7 @@ public final class MainController {
         alert.setHeaderText(null);
         alert.setTitle("¡Ojo!");
         if (alert.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
+            boolean successful = true;
             if (isDirectory) {
                 Alert alert2 = new Alert(Alert.AlertType.CONFIRMATION);
                 alert2.setContentText(resourceBundle.getString("folder_recursive_delete_advise"));
@@ -251,12 +295,47 @@ public final class MainController {
                 alert2.setHeaderText(null);
                 alert2.setTitle("¡Ojo!");
                 if (alert2.showAndWait().filter(ButtonType.OK::equals).isPresent()) {
-                    model.deleteFolder(filePath.replace(rootPath, ""));
+                    successful = model.deleteFolder(filePath.replace(rootPath, ""));
                 }
             } else {
-                model.deleteFile(filePath.replace(rootPath, ""));
+                successful = model.deleteFile(filePath.replace(rootPath, ""));
+            }
+            if (successful) {
+                new Thread(() -> {
+                    Path nativePath = Path.of(filePath);
+                    Optional<TreeItem<FileItem>> parent = findItemByPath(directoryTreeView.getRoot(), nativePath.toString());
+                    System.out.println(parent);
+                    System.out.println(nativePath);
+                    Platform.runLater(() -> parent.ifPresent(this::removeOptimisticFile));
+                }).start();
             }
         }
+    }
+
+    private void downloadFile(String filePath, boolean isFolder) {
+        String fileName = getPath(filePath);
+        if (!isFolder) {
+
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialFileName(fileName);
+            File selectedDirectory = fileChooser.showSaveDialog(App.getRootStage());
+            Optional<TreeItem<FileItem>> optionalTreeItem = findItemByPath(directoryTreeView.getRoot(), Path.of(filePath).toString());
+            long size = 0;
+            if (optionalTreeItem.isPresent()) {
+                size = optionalTreeItem.get().getValue().getSize();
+            }
+            model.downloadFile(
+                    selectedDirectory.getPath(), filePath.replace(rootPath, ""), size);
+
+        } else {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("¡Ojo!");
+            alert.setHeaderText(null);
+            alert.setContentText(resourceBundle.getString("to_download_folder_message"));
+            alert.showAndWait();
+        }
+
+        System.out.println("end download");
     }
 
     private String getPath(TreeItem<FileItem> item) {
@@ -267,6 +346,22 @@ public final class MainController {
             parent = parent.getParent();
         }
         return pathBuilder.toString();
+    }
+
+    private Optional<TreeItem<FileItem>> findItemByPath(TreeItem<FileItem> root, String path) {
+        System.out.println("root " + root.getValue().getPath().toString());
+        System.out.println("path " + path);
+        System.out.println("ASDFASDFA "+root.getValue().getPath().toString().equals(path));
+        if (root.getValue().getPath().toString().equals(path)) {
+            return Optional.of(root);
+        }
+        for (TreeItem<FileItem> child: root.getChildren()) {
+            Optional<TreeItem<FileItem>> childFileItem = findItemByPath(child, path);
+            if (childFileItem.isPresent()) {
+                return childFileItem;
+            }
+        }
+        return Optional.empty();
     }
 
     private String getPath(String path) {

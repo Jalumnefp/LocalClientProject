@@ -4,14 +4,16 @@ import es.jfp.SerialMap;
 import es.jfp.localclientproject.elements.ProgressWidget;
 import es.jfp.localclientproject.models.MainModel;
 import javafx.application.Platform;
+import org.controlsfx.dialog.ExceptionDialog;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerRepository {
 
@@ -34,7 +36,20 @@ public class ServerRepository {
         System.out.println(socket);
     }
 
-    public SerialMap getDirectoryMap() {
+    public synchronized boolean ping() {
+        try {
+            OutputStream os = new BufferedOutputStream(socket.getOutputStream());
+            os.write(30);
+            os.flush();
+            return true;
+        } catch (IOException e) {
+            ExceptionDialog ed = new ExceptionDialog(e);
+            ed.showAndWait();
+            return false;
+        }
+    }
+
+    public synchronized SerialMap getDirectoryMap() {
         try {
 
             OutputStream os = new BufferedOutputStream(socket.getOutputStream());
@@ -47,12 +62,14 @@ public class ServerRepository {
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            ExceptionDialog ed = new ExceptionDialog(e);
+            ed.showAndWait();
         }
         return null;
     }
 
 
-    public boolean loginUser(String username, String hashPassword) {
+    public synchronized boolean loginUser(String username, String hashPassword) {
         System.out.println("login username " + username);
         try {
             DataOutputStream os = new DataOutputStream(socket.getOutputStream());
@@ -68,11 +85,13 @@ public class ServerRepository {
             return is.readBoolean();
 
         } catch (IOException e) {
+            ExceptionDialog ed = new ExceptionDialog(e);
+            ed.showAndWait();
             return false;
         }
     }
 
-    public boolean registerUser(String username, String hashPassword) {
+    public synchronized boolean registerUser(String username, String hashPassword) {
         System.out.println("register username " + username);
         try {
             DataOutputStream os = new DataOutputStream(socket.getOutputStream());
@@ -85,17 +104,21 @@ public class ServerRepository {
             return is.readBoolean();
 
         } catch (IOException e) {
+            ExceptionDialog ed = new ExceptionDialog(e);
+            ed.showAndWait();
             return false;
         }
     }
 
-    public void closeSession() {
+    public synchronized void closeSession() {
         try {
             OutputStream os = socket.getOutputStream();
 
             os.write(03);
 
         } catch (IOException e) {
+            ExceptionDialog ed = new ExceptionDialog(e);
+            ed.showAndWait();
             e.printStackTrace();
         }
     }
@@ -103,7 +126,6 @@ public class ServerRepository {
     public void uploadFile(File file, String relativePath) {
 
         System.out.println("Client start upload to: " + file);
-
         ProgressWidget progressWidget = new ProgressWidget("Upload " + file.getName());
 
         Thread uploadThread = new Thread(() -> {
@@ -111,6 +133,8 @@ public class ServerRepository {
             MainModel.getInstance().insertOnProcessToolbar(progressWidget);
             synchronized (this) {
                 try (InputStream is = Files.newInputStream(file.toPath())) {
+
+                    System.out.println("UPLOAD SIZE: " + file.length());
 
                     OutputStream os = new BufferedOutputStream(socket.getOutputStream());
 
@@ -132,15 +156,16 @@ public class ServerRepository {
                         bytesSent += bytesRead;
 
                         int progress = (int) (((float) bytesSent / file.length()) * 100);
-
+                        System.out.println("Progress => " + progress);
                         Platform.runLater(() -> progressWidget.setBarProgress(progress));
                     }
                     os.write(-1);
                     os.flush();
-                    System.out.println("Final upload");
+                    System.out.println("END upload");
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    ExceptionDialog ed = new ExceptionDialog(e);
+                    ed.showAndWait();
                 }
             }
 
@@ -149,7 +174,7 @@ public class ServerRepository {
         progressWidget.setProcessThread(uploadThread);
     }
 
-    public synchronized void downloadFile(String destinationPath, String path) {
+    public void downloadFile(String destinationPath, String path, long fileSize) {
 
         ProgressWidget progressWidget = new ProgressWidget("Download " + Path.of(path).getFileName());
 
@@ -157,6 +182,8 @@ public class ServerRepository {
             MainModel.getInstance().insertOnProcessToolbar(progressWidget);
             synchronized (this) {
                 try (OutputStream fos = Files.newOutputStream(Path.of(destinationPath))) {
+
+                    System.out.println("UPLOAD SIZE: " + fileSize);
 
                     OutputStream os = new BufferedOutputStream(socket.getOutputStream());
                     InputStream is = new BufferedInputStream(socket.getInputStream());
@@ -174,20 +201,24 @@ public class ServerRepository {
                     byte[] buffer = new byte[2048];
                     int bytes;
                     while ((bytes=is.read(buffer))!=-1) {
-                        if (bytes == 1 && buffer[0] == -1) {
+                        if (bytes == 1 && buffer[0] == -1 || bytes < buffer.length) {
                             break;
                         }
                         fos.write(buffer, 0, bytes);
                         fos.flush();
                         bytesSent += bytes;
-                        int progress = (int) (((float) bytesSent / new File(path).length()) * 100);
-
+                        int progress = (int) (((float) bytesSent / fileSize) * 100);
+                        System.out.println("Progress => " + progress);
                         Platform.runLater(() -> progressWidget.setBarProgress(progress));
                     }
-                    System.out.println("Final download");
+                    System.out.println("FINAL download");
                     fos.flush();
 
+                    Platform.runLater(() -> progressWidget.setBarProgress(100));
+
                 } catch (IOException e) {
+                    ExceptionDialog ed = new ExceptionDialog(e);
+                    ed.showAndWait();
                     e.printStackTrace();
                 }
             }
@@ -201,7 +232,7 @@ public class ServerRepository {
 
     }
 
-    public synchronized void deleteFile(String pathToDelete) {
+    public synchronized boolean deleteFile(String pathToDelete) {
         try {
 
             synchronized (this) {
@@ -211,14 +242,18 @@ public class ServerRepository {
                 os.flush();
                 os.writeUTF(pathToDelete);
                 os.flush();
+
+                return true;
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            ExceptionDialog ed = new ExceptionDialog(e);
+            ed.showAndWait();
+            return false;
         }
     }
 
-    public synchronized void deleteFolder(String pathToDelete) {
+    public synchronized boolean deleteFolder(String pathToDelete) {
         try {
 
             synchronized (this) {
@@ -228,14 +263,18 @@ public class ServerRepository {
                 os.flush();
                 os.writeUTF(pathToDelete);
                 os.flush();
+
+                return true;
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            ExceptionDialog ed = new ExceptionDialog(e);
+            ed.showAndWait();
+            return false;
         }
     }
 
-    public synchronized void createNewFolder(String folderPath) {
+    public synchronized boolean createNewFolder(String folderPath) {
         try {
 
             synchronized (this) {
@@ -247,11 +286,14 @@ public class ServerRepository {
                 os.writeUTF(folderPath);
                 os.flush();
 
-                MainModel.getInstance().requestControllerUpdateDirectory();
+                //MainModel.getInstance().requestControllerUpdateDirectory();
+                return true;
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            ExceptionDialog ed = new ExceptionDialog(e);
+            ed.showAndWait();
+            return false;
         }
     }
 
@@ -265,7 +307,7 @@ public class ServerRepository {
         }
     }
 
-    public boolean socketIsRunning() {
+    public synchronized boolean socketIsRunning() {
         return this.socket.isConnected();
     }
 

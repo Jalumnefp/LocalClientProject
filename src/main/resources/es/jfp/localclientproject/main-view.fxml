@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
+<?import es.jfp.localclientproject.elements.LangComboBox?>
+<?import es.jfp.localclientproject.elements.ThemeButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import org.controlsfx.glyphfont.*?>
-<?import es.jfp.localclientproject.elements.ThemeButton?>
-<?import es.jfp.localclientproject.elements.LangComboBox?>
-
-<?import javafx.scene.control.skin.ColorPickerSkin.PickerColorBox?>
 <?import javafx.scene.shape.QuadCurve?>
+<?import org.controlsfx.glyphfont.Glyph?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
             stylesheets="@styles/main-view-styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="es.jfp.localclientproject.controllers.MainController">
@@ -39,14 +37,14 @@
                             </Button>
                             <HBox prefHeight="0.0" prefWidth="10.0" />
                         <Button fx:id="reloadDirectorys">
-                                <graphic>
-                                    <Glyph fontFamily="FontAwesome" icon="USER" />
-                                </graphic>
-                            </Button>
-                            <HBox prefHeight="0.0" prefWidth="10.0" />
-                                <ThemeButton />
-                            <HBox prefHeight="0.0" prefWidth="10.0" />
-                                <LangComboBox />
+                            <graphic>
+                                <Glyph fontFamily="FontAwesome" icon="REFRESH" />
+                            </graphic>
+                        </Button>
+                        <HBox prefHeight="0.0" prefWidth="10.0" />
+                        <ThemeButton />
+                        <HBox prefHeight="0.0" prefWidth="10.0" />
+                        <LangComboBox />
                         </items>
                     </ToolBar>
                     <TreeView fx:id="directoryTreeView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" />

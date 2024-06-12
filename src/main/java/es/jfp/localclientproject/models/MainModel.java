@@ -8,19 +8,17 @@ import es.jfp.localclientproject.elements.ProgressWidget;
 import es.jfp.localclientproject.repositorys.ServerRepository;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.TreeItem;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
 public final class MainModel {
-
 
     private static MainModel instance;
     private final ServerRepository serverRepo = ServerRepository.getInstance();
@@ -28,6 +26,7 @@ public final class MainModel {
     private File selectedFile;
     private ToolBar procesToolbar;
     private Method controllerUpdateDirectory;
+    private SerialMap currentSerialMap;
 
     private MainModel() {}
 
@@ -53,26 +52,27 @@ public final class MainModel {
     }
 
     public TreeItem<FileItem> getTreeDirectory() {
-
         SerialMap serialMap = serverRepo.getDirectoryMap();
         return createTreeItem(serialMap.getRootFile());
     }
 
+
     private TreeItem<FileItem> createTreeItem(SerialFile rootFile) {
-        FileItem rootItem = new FileItem(rootFile.getFileName(), true);
+        FileItem rootItem = new FileItem(rootFile.getFileName(), true, Path.of(rootFile.getDirectory()), rootFile.getSize());
         TreeItem<FileItem> root = new TreeItem<>(rootItem);
-        List<TreeItem<FileItem>> children = createTreeItem(rootFile.getChildren());
+        List<TreeItem<FileItem>> children = createTreeItem(rootFile.getChildren(), rootFile);
         root.getChildren().addAll(children);
         return root;
     }
 
-    private List<TreeItem<FileItem>> createTreeItem(List<SerialFile> files) {
+    private List<TreeItem<FileItem>> createTreeItem(List<SerialFile> files, SerialFile rootFile) {
         List<TreeItem<FileItem>> treeItems = new LinkedList<>();
         files.forEach(child -> {
-            FileItem fileItem = new FileItem(child.getFileName(), child.isFolder());
+            Path path = Path.of(rootFile.getDirectory(), child.getDirectory());
+            FileItem fileItem = new FileItem(child.getFileName(), child.isFolder(), path, child.getSize());
             TreeItem<FileItem> treeItem = new TreeItem<>(fileItem);
             if (child.isFolder()) {
-                List<TreeItem<FileItem>> children = createTreeItem(child.getChildren());
+                List<TreeItem<FileItem>> children = createTreeItem(child.getChildren(), rootFile);
                 treeItem.getChildren().addAll(children);
             }
             treeItems.add(treeItem);
@@ -80,16 +80,20 @@ public final class MainModel {
         return treeItems;
     }
 
-    public void deleteFile(String path) {
-        serverRepo.deleteFile(path);
+    public boolean deleteFile(String path) {
+        return serverRepo.deleteFile(path);
     }
 
-    public void deleteFolder(String path) {
-        serverRepo.deleteFolder(path);
+    public boolean requestPing() {
+        return serverRepo.ping();
     }
 
-    public void createNewFolder(String path) {
-        serverRepo.createNewFolder(path);
+    public boolean deleteFolder(String path) {
+        return serverRepo.deleteFolder(path);
+    }
+
+    public boolean createNewFolder(String path) {
+        return serverRepo.createNewFolder(path);
     }
 
     public void uploadFile(File file, String relativePath) {
@@ -98,8 +102,8 @@ public final class MainModel {
 
 
 
-    public void downloadFile(String destination, String filePath) {
-        serverRepo.downloadFile(destination, filePath);
+    public void downloadFile(String destination, String filePath, long size) {
+        serverRepo.downloadFile(destination, filePath, size);
     }
 
     public void sendFileToModel(File file) {
@@ -120,9 +124,7 @@ public final class MainModel {
         }
     }
 
-    public void setControllerUpdateDirectory(Method controllerUpdateDirectory) {
-        this.controllerUpdateDirectory = controllerUpdateDirectory;
-    }
+
 
     /*private TreeItem<FileItem> createTreeItem(Map<String, List<String[]>> directorios) {
         TreeItem<FileItem> root;

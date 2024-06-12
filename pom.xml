@@ -104,6 +104,10 @@
                 </executions>
             </plugin>
 
+
+
+
+
             <!-- <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>

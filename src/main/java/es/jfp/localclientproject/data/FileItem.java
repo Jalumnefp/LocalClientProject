@@ -7,17 +7,22 @@ public class FileItem {
     private long id;
     private String name;
     private Path path;
+    private long size;
     private boolean isDirectory;
 
-    public FileItem(String name, boolean isDirectory) {
-        this.name = name;
-        this.isDirectory = isDirectory;
-    }
-
-    public FileItem(String name, boolean isDirectory, Path path) {
+    public FileItem(String name, boolean isDirectory, Path path, long size) {
         this.name = name;
         this.path = path;
         this.isDirectory = isDirectory;
+        this.size = size;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
     }
 
     public String getName() {

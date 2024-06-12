@@ -25,7 +25,7 @@ public class FileListItem extends HBox {
     private final boolean isDirectory;
     private final String path;
 
-    public FileListItem(String fileName, String path, boolean isDirectory, Consumer<String> download, BiConsumer<String, Boolean> delete) {
+    public FileListItem(String fileName, String path, boolean isDirectory, BiConsumer<String, Boolean> download, BiConsumer<String, Boolean> delete) {
         Label fileNameLabel = setUpFileName(fileName);
         this.path = path;
         this.isDirectory = isDirectory;
@@ -60,11 +60,11 @@ public class FileListItem extends HBox {
         return imageView;
     }
 
-    private MenuButton setUpButton(Consumer<String> download, BiConsumer<String, Boolean> delete) {
+    private MenuButton setUpButton(BiConsumer<String, Boolean> download, BiConsumer<String, Boolean> delete) {
         MenuButton button = new MenuButton();
         button.setStyle("-fx-font-size: 12px; -fx-background-color: transparent;");
         MenuItem menuItemDownload = new MenuItem(resourceBundle.getString("download"));
-        menuItemDownload.setOnAction(actionEvent -> download.accept(this.path));
+        menuItemDownload.setOnAction(actionEvent -> download.accept(this.path, isDirectory));
         MenuItem menuItemEliminar = new MenuItem(resourceBundle.getString("delete"));
         menuItemEliminar.setOnAction(actionEvent -> delete.accept(this.path, isDirectory));
         button.getItems().addAll(menuItemDownload, menuItemEliminar);

@@ -1,22 +1,17 @@
 package es.jfp.localclientproject;
 
-import es.jfp.localclientproject.controllers.MainController;
 import es.jfp.localclientproject.repositorys.ServerRepository;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.nio.file.Path;
-import java.util.function.Consumer;
-import java.util.prefs.Preferences;
 
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.prefs.Preferences;
 
 public class App extends Application {
 
@@ -25,7 +20,6 @@ public class App extends Application {
     private static String currentUser = null;
     private static String currentScene = null;
     private static Locale currentLocale = null;
-
 
     @Override
     public void start(Stage stage) throws IOException {
