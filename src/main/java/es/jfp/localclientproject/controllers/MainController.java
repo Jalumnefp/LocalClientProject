@@ -205,7 +205,7 @@ public final class MainController {
                     Path folderPath = Path.of(path);
                     FileItem fileItem = new FileItem(folderPath.getFileName().toString(), true, folderPath, 0);
                     TreeItem<FileItem> newTreeItem = new TreeItem<>(fileItem);
-                    addOptimisticFile(parent.get(), newTreeItem);
+                    Platform.runLater(() -> addOptimisticFile(parent.get(), newTreeItem));
                 }
             }
         }
@@ -248,20 +248,18 @@ public final class MainController {
             Path path = Path.of(directoryTreeTitleLabel.getText() + '/' + selectedFile.getName());
             model.uploadFile(selectedFile, path.toString().replace(rootPath, ""));
 
-            new Thread(() -> {
-                Path parentPath = Path.of(directoryTreeTitleLabel.getText());
-                Optional<TreeItem<FileItem>> parent = findItemByPath(directoryTreeView.getRoot(), parentPath.toString());
-                if (parent.isPresent()) {
-                    FileItem fileItem = new FileItem(
-                            selectedFile.getName(),
-                            selectedFile.isDirectory(),
-                            Path.of(directoryTreeTitleLabel.getText(), selectedFile.getName()),
-                            selectedFile.length()
-                    );
-                    TreeItem<FileItem> newTreeItem = new TreeItem<>(fileItem);
-                    Platform.runLater(() -> addOptimisticFile(parent.get(), newTreeItem));
-                }
-            }).start();
+            Path parentPath = Path.of(directoryTreeTitleLabel.getText());
+            Optional<TreeItem<FileItem>> parent = findItemByPath(directoryTreeView.getRoot(), parentPath.toString());
+            if (parent.isPresent()) {
+                FileItem fileItem = new FileItem(
+                        selectedFile.getName(),
+                        selectedFile.isDirectory(),
+                        Path.of(directoryTreeTitleLabel.getText(), selectedFile.getName()),
+                        selectedFile.length()
+                );
+                TreeItem<FileItem> newTreeItem = new TreeItem<>(fileItem);
+                addOptimisticFile(parent.get(), newTreeItem);
+            }
 
         }
     }
@@ -301,13 +299,9 @@ public final class MainController {
                 successful = model.deleteFile(filePath.replace(rootPath, ""));
             }
             if (successful) {
-                new Thread(() -> {
-                    Path nativePath = Path.of(filePath);
-                    Optional<TreeItem<FileItem>> parent = findItemByPath(directoryTreeView.getRoot(), nativePath.toString());
-                    System.out.println(parent);
-                    System.out.println(nativePath);
-                    Platform.runLater(() -> parent.ifPresent(this::removeOptimisticFile));
-                }).start();
+                Path nativePath = Path.of(filePath);
+                Optional<TreeItem<FileItem>> parent = findItemByPath(directoryTreeView.getRoot(), nativePath.toString());
+                Platform.runLater(() -> parent.ifPresent(this::removeOptimisticFile));
             }
         }
     }
@@ -349,9 +343,6 @@ public final class MainController {
     }
 
     private Optional<TreeItem<FileItem>> findItemByPath(TreeItem<FileItem> root, String path) {
-        System.out.println("root " + root.getValue().getPath().toString());
-        System.out.println("path " + path);
-        System.out.println("ASDFASDFA "+root.getValue().getPath().toString().equals(path));
         if (root.getValue().getPath().toString().equals(path)) {
             return Optional.of(root);
         }

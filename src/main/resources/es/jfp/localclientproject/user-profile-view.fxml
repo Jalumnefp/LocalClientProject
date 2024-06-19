@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.UserProfileController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="es.jfp.localclientproject.controllers.UserProfileController">
    <children>
-      <Label fx:id="usernameLabel" text="USERNAME" />
-      <Button fx:id="changePassword" mnemonicParsing="false" text="Cambiar contraseña" />
+      <Label fx:id="usernameLabel" prefHeight="18.0" prefWidth="84.0" text="USERNAME" textAlignment="CENTER">
+         <VBox.margin>
+            <Insets bottom="20.0" />
+         </VBox.margin></Label>
       <Button fx:id="closeSessionButton" mnemonicParsing="false" text="Cerrar sesión" />
    </children>
+   <padding>
+      <Insets left="10.0" right="10.0" top="10.0" />
+   </padding>
 </VBox>

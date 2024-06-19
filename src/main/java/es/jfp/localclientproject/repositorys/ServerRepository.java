@@ -125,15 +125,16 @@ public class ServerRepository {
 
     public void uploadFile(File file, String relativePath) {
 
-        System.out.println("Client start upload to: " + file);
+        System.out.println("Wait to upload: " + file);
         ProgressWidget progressWidget = new ProgressWidget("Upload " + file.getName());
+        Platform.runLater(() -> MainModel.getInstance().insertOnProcessToolbar(progressWidget));
 
         Thread uploadThread = new Thread(() -> {
 
-            MainModel.getInstance().insertOnProcessToolbar(progressWidget);
             synchronized (this) {
                 try (InputStream is = Files.newInputStream(file.toPath())) {
 
+                    System.out.println("Client start upload to: " + file);
                     System.out.println("UPLOAD SIZE: " + file.length());
 
                     OutputStream os = new BufferedOutputStream(socket.getOutputStream());
@@ -156,7 +157,6 @@ public class ServerRepository {
                         bytesSent += bytesRead;
 
                         int progress = (int) (((float) bytesSent / file.length()) * 100);
-                        System.out.println("Progress => " + progress);
                         Platform.runLater(() -> progressWidget.setBarProgress(progress));
                     }
                     os.write(-1);
